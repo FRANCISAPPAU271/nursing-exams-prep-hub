@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+
+# Next.js build output
+.next/
+out/
+
+# ── Secrets: never commit these ────────────────────────────────────
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+npm-debug.log*
+
+# Local tooling / editors
+.DS_Store
+.idea/
+.vscode/
+
+# Drizzle generated migrations (keep schema.ts as source of truth)
+drizzle/
+
+# Test artifacts
+coverage/

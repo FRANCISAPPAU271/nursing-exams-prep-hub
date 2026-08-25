@@ -1,0 +1,52 @@
+@import "tailwindcss";
+
+html {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* Hide the default marker on <details> summaries used in FAQ accordions */
+summary::-webkit-details-marker {
+  display: none;
+}
+
+/* ── Content protection ─────────────────────────────────────────── */
+/* Disable printing of paid study content entirely */
+@media print {
+  body {
+    display: none !important;
+  }
+}
+
+/* Block text selection + image dragging inside the dashboard */
+.protected-content {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none;
+  -webkit-touch-callout: none;
+}
+
+/* Inputs and textareas must stay usable */
+.protected-content input,
+.protected-content textarea,
+.protected-content select,
+.protected-content [contenteditable="true"] {
+  -webkit-user-select: text;
+  -moz-user-select: text;
+  user-select: text;
+}
+
+.protected-content img {
+  -webkit-user-drag: none;
+  user-drag: none;
+  pointer-events: none;
+}
+
+.-rotate-30 {
+  transform: rotate(-30deg);
+}
