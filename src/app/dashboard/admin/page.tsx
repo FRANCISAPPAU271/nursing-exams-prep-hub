@@ -1,6 +1,6 @@
 import { redirect } from "next/navigation";
 import { db } from "@/db";
-import { payments, payouts, users } from "@/db/schema";
+import { passwordResets, payments, payouts, users } from "@/db/schema";
 import { requireUser } from "@/lib/require-user";
 import { desc, eq } from "drizzle-orm";
 import AdminClient from "./AdminClient";
@@ -50,8 +50,28 @@ export default async function AdminPage() {
     .orderBy(desc(payouts.createdAt))
     .limit(100);
 
+  const resetRows = await db
+    .select({
+      id: passwordResets.id,
+      code: passwordResets.code,
+      status: passwordResets.status,
+      expiresAt: passwordResets.expiresAt,
+      createdAt: passwordResets.createdAt,
+      studentName: users.name,
+      studentEmail: users.email,
+    })
+    .from(passwordResets)
+    .leftJoin(users, eq(users.id, passwordResets.userId))
+    .orderBy(desc(passwordResets.createdAt))
+    .limit(50);
+
   return (
     <AdminClient
+      initialResets={resetRows.map((r) => ({
+        ...r,
+        createdAt: r.createdAt.toISOString(),
+        expiresAt: r.expiresAt.toISOString(),
+      }))}
       initialPayments={paymentRows.map((r) => ({ ...r, createdAt: r.createdAt.toISOString() }))}
       initialPayouts={payoutRows.map((r) => ({
         ...r,

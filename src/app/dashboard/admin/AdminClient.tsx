@@ -19,6 +19,16 @@ export type AdminPayment = {
   studentEmail: string | null;
 };
 
+export type AdminReset = {
+  id: number;
+  code: string;
+  status: string;
+  expiresAt: string;
+  createdAt: string;
+  studentName: string | null;
+  studentEmail: string | null;
+};
+
 export type AdminPayout = {
   id: number;
   userId: number;
@@ -36,12 +46,15 @@ export type AdminPayout = {
 export default function AdminClient({
   initialPayments,
   initialPayouts,
+  initialResets,
 }: {
   initialPayments: AdminPayment[];
   initialPayouts: AdminPayout[];
+  initialResets: AdminReset[];
 }) {
-  const [view, setView] = useState<"payments" | "payouts">("payments");
+  const [view, setView] = useState<"payments" | "payouts" | "resets">("payments");
   const waitingPayouts = initialPayouts.filter((p) => p.status === "requested").length;
+  const waitingResets = initialResets.filter((r) => r.status === "requested").length;
 
   return (
     <div className="mx-auto max-w-6xl space-y-6">
@@ -74,14 +87,25 @@ export default function AdminClient({
               </span>
             )}
           </button>
+          <button
+            onClick={() => setView("resets")}
+            className={`relative rounded-lg px-4 py-2 text-sm font-semibold ${
+              view === "resets" ? "bg-slate-900 text-white" : "text-slate-600"
+            }`}
+          >
+            Password resets
+            {waitingResets > 0 && (
+              <span className="ml-2 rounded-full bg-sky-400 px-1.5 py-0.5 text-[10px] font-bold text-sky-950">
+                {waitingResets}
+              </span>
+            )}
+          </button>
         </div>
       </header>
 
-      {view === "payments" ? (
-        <PaymentsPanel initial={initialPayments} />
-      ) : (
-        <PayoutsPanel initial={initialPayouts} />
-      )}
+      {view === "payments" && <PaymentsPanel initial={initialPayments} />}
+      {view === "payouts" && <PayoutsPanel initial={initialPayouts} />}
+      {view === "resets" && <ResetsPanel initial={initialResets} />}
     </div>
   );
 }
@@ -372,5 +396,120 @@ function Empty({ icon, title, body }: { icon: string; title: string; body: strin
       <p className="mt-3 font-semibold text-slate-700">{title}</p>
       <p className="mt-1 text-sm text-slate-500">{body}</p>
     </div>
+  );
+}
+
+
+function ResetsPanel({ initial }: { initial: AdminReset[] }) {
+  const [rows, setRows] = useState(initial);
+  const [busy, setBusy] = useState(0);
+  const [msg, setMsg] = useState("");
+  const [revealed, setRevealed] = useState<number | null>(null);
+
+  const pending = rows.filter((r) => r.status === "requested");
+
+  async function act(id: number, action: "verify" | "cancel") {
+    setBusy(id);
+    setMsg("");
+    const res = await fetch("/api/admin/password-resets", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ id, action }),
+    });
+    const data = await res.json();
+    setBusy(0);
+    if (!res.ok) return setMsg(data.error ?? "Action failed.");
+    if (action === "verify") {
+      setRows((p) => p.map((r) => (r.id === id ? { ...r, status: "approved" } : r)));
+      setRevealed(id);
+      setMsg(`Verified. Read this code to the student: ${data.code}`);
+    } else {
+      setRows((p) => p.map((r) => (r.id === id ? { ...r, status: "cancelled" } : r)));
+      setMsg("Request cancelled — the code will no longer work.");
+    }
+  }
+
+  return (
+    <>
+      <section className="grid gap-4 sm:grid-cols-3">
+        <Stat label="Awaiting verification" value={String(pending.length)} accent />
+        <Stat label="Approved" value={String(rows.filter((r) => r.status === "approved").length)} />
+        <Stat label="Completed" value={String(rows.filter((r) => r.status === "used").length)} />
+      </section>
+
+      <div className="rounded-2xl border border-sky-200 bg-sky-50 p-5 text-sm text-sky-950">
+        <p className="font-semibold">How to verify a password reset</p>
+        <ol className="mt-2 list-decimal space-y-1 pl-5">
+          <li>Message the student on WhatsApp to confirm their identity.</li>
+          <li>Ask which plan they bought and roughly when they paid.</li>
+          <li>Only then tap <strong>Verify &amp; release code</strong> and read the 6 digits out.</li>
+        </ol>
+        <p className="mt-2 text-xs">
+          Codes expire 20 minutes after request and work once. Cancelling makes the code unusable.
+        </p>
+      </div>
+
+      {msg && <p className="rounded-xl bg-slate-900 px-4 py-3 text-sm text-white">{msg}</p>}
+
+      {rows.length === 0 ? (
+        <Empty icon="🔑" title="No reset requests" body="Forgotten-password requests will appear here." />
+      ) : (
+        <ul className="space-y-3">
+          {rows.map((r) => (
+            <li
+              key={r.id}
+              className="flex flex-wrap items-start gap-4 rounded-2xl border border-slate-200 bg-white p-5"
+            >
+              <div className="min-w-0 flex-1">
+                <p className="font-semibold">
+                  {r.studentName ?? "Unknown"}{" "}
+                  <span className="font-normal text-slate-500">({r.studentEmail})</span>
+                </p>
+                <p className="mt-1 text-sm text-slate-600">
+                  Requested {new Date(r.createdAt).toLocaleString()} · expires{" "}
+                  {new Date(r.expiresAt).toLocaleTimeString()}
+                </p>
+                {revealed === r.id && (
+                  <p className="mt-2 font-mono text-2xl font-bold tracking-[0.2em] text-sky-700">
+                    {r.code}
+                  </p>
+                )}
+                <span
+                  className={`mt-2 inline-block rounded-full px-2.5 py-0.5 text-xs capitalize ring-1 ${
+                    r.status === "requested"
+                      ? "bg-sky-50 text-sky-700 ring-sky-200"
+                      : r.status === "approved"
+                        ? "bg-amber-50 text-amber-700 ring-amber-200"
+                        : r.status === "used"
+                          ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+                          : "bg-slate-100 text-slate-500 ring-slate-200"
+                  }`}
+                >
+                  {r.status}
+                </span>
+              </div>
+              {r.status === "requested" && (
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => act(r.id, "verify")}
+                    disabled={busy === r.id}
+                    className="rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-60"
+                  >
+                    {busy === r.id ? "…" : "Verify & release code"}
+                  </button>
+                  <button
+                    onClick={() => act(r.id, "cancel")}
+                    disabled={busy === r.id}
+                    className="rounded-xl border border-rose-200 px-4 py-2 text-sm text-rose-600"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+    </>
   );
 }

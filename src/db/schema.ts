@@ -53,6 +53,22 @@ export const payouts = pgTable("payouts", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
+
+/** Single-use password reset codes. Surfaced to admins for manual verification. */
+export const passwordResets = pgTable("password_resets", {
+  id: serial("id").primaryKey(),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, { onDelete: "cascade" }),
+  code: text("code").notNull().unique(),
+  // requested -> approved -> used | expired
+  status: text("status").notNull().default("requested"),
+  note: text("note").notNull().default(""),
+  expiresAt: timestamp("expires_at").notNull(),
+  usedAt: timestamp("used_at"),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 export const sessions = pgTable("sessions", {
   id: text("id").primaryKey(),
   userId: integer("user_id")

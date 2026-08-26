@@ -16,6 +16,13 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
   const params = useSearchParams();
   const [ref, setRef] = useState((params.get("ref") ?? "").toUpperCase());
   const inactivityReason = params.get("reason") === "inactivity";
+  // Forgot-password flow: request -> verify code -> set new password
+  const [flow, setFlow] = useState<"signin" | "forgot" | "reset">("signin");
+  const [resetEmail, setResetEmail] = useState("");
+  const [resetCode, setResetCode] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [resetMsg, setResetMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
+  const [resetBusy, setResetBusy] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -34,6 +41,38 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
     }
     router.push("/dashboard");
     router.refresh();
+  }
+
+  async function requestReset(e: React.FormEvent) {
+    e.preventDefault();
+    setResetBusy(true);
+    setResetMsg(null);
+    const res = await fetch("/api/auth/forgot", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: resetEmail }),
+    });
+    const data = await res.json();
+    setResetBusy(false);
+    if (!res.ok) return setResetMsg({ kind: "err", text: data.error ?? "Could not start reset." });
+    setResetMsg({ kind: "ok", text: data.message });
+    setFlow("reset");
+  }
+
+  async function completeReset(e: React.FormEvent) {
+    e.preventDefault();
+    setResetBusy(true);
+    setResetMsg(null);
+    const res = await fetch("/api/auth/forgot", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: resetCode, password: newPassword }),
+    });
+    const data = await res.json();
+    setResetBusy(false);
+    if (!res.ok) return setResetMsg({ kind: "err", text: data.error ?? "Could not reset password." });
+    setResetMsg({ kind: "ok", text: data.message });
+    setTimeout(() => setFlow("signin"), 2200);
   }
 
   return (
@@ -57,6 +96,110 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
               : "Sign in to continue your study plan."}
           </p>
 
+          {flow === "forgot" && (
+            <form onSubmit={requestReset} className="mt-6 space-y-4">
+              <p className="text-sm text-slate-600">
+                Enter the email on your account. A 6-digit code will be created and our support team
+                will verify your identity and send it to you on WhatsApp.
+              </p>
+              <Field label="Email address">
+                <input
+                  type="email"
+                  className={inputCls}
+                  value={resetEmail}
+                  onChange={(e) => setResetEmail(e.target.value)}
+                  required
+                />
+              </Field>
+              {resetMsg && (
+                <p
+                  className={`rounded-lg px-3 py-2 text-sm ring-1 ${
+                    resetMsg.kind === "ok"
+                      ? "bg-emerald-50 text-emerald-800 ring-emerald-200"
+                      : "bg-rose-50 text-rose-700 ring-rose-200"
+                  }`}
+                >
+                  {resetMsg.text}
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={resetBusy}
+                className="w-full rounded-xl bg-teal-600 px-4 py-2.5 font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
+              >
+                {resetBusy ? "Creating code…" : "Get a reset code"}
+              </button>
+              <p className="text-center text-sm text-slate-500">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFlow("signin");
+                    setResetMsg(null);
+                  }}
+                  className="font-medium text-teal-700 hover:underline"
+                >
+                  Back to sign in
+                </button>
+              </p>
+            </form>
+          )}
+
+          {flow === "reset" && (
+            <form onSubmit={completeReset} className="mt-6 space-y-4">
+              <Field label="6-digit reset code">
+                <input
+                  className={`${inputCls} font-mono tracking-[0.3em]`}
+                  value={resetCode}
+                  onChange={(e) => setResetCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                  placeholder="123456"
+                  inputMode="numeric"
+                  required
+                />
+              </Field>
+              <Field label="New password">
+                <input
+                  type="password"
+                  className={inputCls}
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  minLength={6}
+                  required
+                />
+              </Field>
+              {resetMsg && (
+                <p
+                  className={`rounded-lg px-3 py-2 text-sm ring-1 ${
+                    resetMsg.kind === "ok"
+                      ? "bg-emerald-50 text-emerald-800 ring-emerald-200"
+                      : "bg-rose-50 text-rose-700 ring-rose-200"
+                  }`}
+                >
+                  {resetMsg.text}
+                </p>
+              )}
+              <button
+                type="submit"
+                disabled={resetBusy || resetCode.length !== 6}
+                className="w-full rounded-xl bg-teal-600 px-4 py-2.5 font-semibold text-white hover:bg-teal-700 disabled:opacity-60"
+              >
+                {resetBusy ? "Updating…" : "Set new password"}
+              </button>
+              <p className="text-center text-sm text-slate-500">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setFlow("signin");
+                    setResetMsg(null);
+                  }}
+                  className="font-medium text-teal-700 hover:underline"
+                >
+                  Back to sign in
+                </button>
+              </p>
+            </form>
+          )}
+
+          {flow === "signin" && (
           <form onSubmit={submit} className="mt-6 space-y-4">
             {isRegister && (
               <Field label="Full name">
@@ -115,6 +258,22 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
               {loading ? "Please wait…" : isRegister ? "Create account" : "Sign in"}
             </button>
           </form>
+          )}
+
+          {flow === "signin" && !isRegister && (
+            <p className="mt-3 text-center text-sm">
+              <button
+                type="button"
+                onClick={() => {
+                  setFlow("forgot");
+                  setResetMsg(null);
+                }}
+                className="font-medium text-slate-500 hover:text-teal-700 hover:underline"
+              >
+                Forgot your password?
+              </button>
+            </p>
+          )}
 
           <p className="mt-4 rounded-xl bg-slate-50 px-3 py-2.5 text-xs text-slate-600">
             🛡 One account, one device. Signing in here will sign you out everywhere else.
