@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { categoriesFor, DEFAULT_EXAM, getExam } from "@/lib/exams";
 import { buildExplanation } from "@/lib/explain";
@@ -34,6 +34,10 @@ export default function PracticeClient({ isPremium }: { isPremium: boolean }) {
   const [saving, setSaving] = useState(false);
   const [lockMsg, setLockMsg] = useState("");
 
+  // 1 minute (60 s) allowed per question, whole quiz
+  const [secondsLeft, setSecondsLeft] = useState(count * 60);
+  const [timedOut, setTimedOut] = useState(false);
+
   async function start() {
     setLoading(true);
     const params = new URLSearchParams({ count: String(count), exam });
@@ -51,8 +55,44 @@ export default function PracticeClient({ isPremium }: { isPremium: boolean }) {
     setSelected(null);
     setAnswers([]);
     setFinished(false);
+    setTimedOut(false);
+    setSecondsLeft(data.questions.length * 60);
+    finishRef.current = false;
     setLoading(false);
   }
+
+  // Count down 60 s per question; auto-submit at zero.
+  const finishRef = useRef(false);
+  const finishExam = useCallback(async () => {
+    if (!items || finishRef.current) return;
+    finishRef.current = true;
+    setTimedOut(true);
+    setFinished(true);
+    setSaving(true);
+    const correct = answers.filter(Boolean).length;
+    await fetch("/api/quiz", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ exam, category: category || "Mixed", total: items.length, correct }),
+    });
+    setSaving(false);
+    router.refresh();
+  }, [items, answers, exam, category, router]);
+
+  useEffect(() => {
+    if (!items || finished) return;
+    const t = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          clearInterval(t);
+          void finishExam();
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(t);
+  }, [items, finished, finishExam]);
 
   async function next() {
     if (!items) return;
@@ -129,6 +169,10 @@ export default function PracticeClient({ isPremium }: { isPremium: boolean }) {
               </a>
             </p>
           )}
+          <p className="rounded-xl bg-slate-50 px-4 py-2.5 text-sm text-slate-600 ring-1 ring-slate-200 sm:col-span-2">
+            ⏱ Time limit: <strong>{count} minute{count > 1 ? "s" : ""}</strong> — 1 minute per
+            question. The quiz auto-submits when the clock runs out.
+          </p>
           <div className="sm:col-span-2">
             <button
               onClick={start}
@@ -150,6 +194,11 @@ export default function PracticeClient({ isPremium }: { isPremium: boolean }) {
         <div className="rounded-2xl border border-slate-200 bg-white p-10">
           <p className="text-5xl">{pct >= 75 ? "🎉" : pct >= 60 ? "💪" : "📚"}</p>
           <h1 className="mt-3 text-2xl font-bold">You scored {pct}%</h1>
+          {timedOut && (
+            <p className="mt-3 rounded-xl bg-amber-50 px-4 py-2 text-sm text-amber-800 ring-1 ring-amber-200">
+              ⏱ Time ran out — the quiz auto-submitted at 1 minute per question.
+            </p>
+          )}
           <p className="mt-1 text-slate-500">
             {correct} correct out of {items.length} · {category || "Mixed"}
           </p>
@@ -183,6 +232,23 @@ export default function PracticeClient({ isPremium }: { isPremium: boolean }) {
           Question {index + 1} of {items.length}
         </h1>
         <span className="text-sm text-slate-500">{answers.filter(Boolean).length} correct so far</span>
+        <span
+          className={`rounded-lg px-3 py-1.5 font-mono text-sm font-bold ${
+            secondsLeft / items.length < 15
+              ? "bg-rose-50 text-rose-700"
+              : secondsLeft / items.length < 30
+                ? "bg-amber-50 text-amber-700"
+                : "bg-slate-100 text-slate-700"
+          }`}
+        >
+          ⏱ {String(Math.floor(secondsLeft / 60)).padStart(2, "0")}:
+          {String(secondsLeft % 60).padStart(2, "0")}
+        </span>
+      </div>
+
+      {/* Time budget: 1 minute per question */}
+      <div className="text-xs text-slate-500">
+        {Math.max(0, Math.ceil(secondsLeft / 60))} minute(s) left — 1 minute per question
       </div>
       <div className="h-2 rounded-full bg-slate-200">
         <div

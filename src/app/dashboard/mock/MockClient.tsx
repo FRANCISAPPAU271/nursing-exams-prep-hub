@@ -134,6 +134,7 @@ export default function MockClient({ isPremium }: { isPremium: boolean }) {
             <Info label="Feedback" value="After submission" />
           </ul>
           <ul className="mt-5 space-y-2 text-sm text-slate-600">
+            <li>▸ Budget <strong>1 minute per question</strong> — pace yourself from the first item.</li>
             <li>▸ Randomised across all 10 {getExam(exam).name} categories.</li>
             <li>▸ Matches the real format: {cfg.label}.</li>
             <li>▸ Flag items for review and navigate freely before submitting.</li>

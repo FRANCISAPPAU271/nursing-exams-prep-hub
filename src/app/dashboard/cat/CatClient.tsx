@@ -48,6 +48,10 @@ export default function CatClient({ isPremium }: { isPremium: boolean }) {
   const [saved, setSaved] = useState(false);
   const savedRef = useRef(false);
 
+  // 1 minute per question budget. Starts at the 75-item maximum.
+  const [secondsLeft, setSecondsLeft] = useState(75 * 60);
+  const [timedOut, setTimedOut] = useState(false);
+
   const answered = history.length;
   const correct = history.filter(Boolean).length;
   const accuracy = answered ? Math.round((correct / answered) * 100) : 0;
@@ -96,6 +100,31 @@ export default function CatClient({ isPremium }: { isPremium: boolean }) {
     await fetchNext();
   }
 
+  // Count down 1 minute per item while the exam is in progress.
+  useEffect(() => {
+    if (!started || state.done) return;
+    const t = setInterval(() => {
+      setSecondsLeft((s) => {
+        if (s <= 1) {
+          clearInterval(t);
+          setTimedOut(true);
+          setState({
+            done: true,
+            result: ability >= 0 ? "pass" : "fail",
+            ability,
+            items: answered,
+            correct,
+            reason: "Time expired at 1 minute per item. Your ability estimate determined the result.",
+          });
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [started, state.done]);
+
   // Save the attempt exactly once when the exam finishes
   useEffect(() => {
     if (!state.done || savedRef.current) return;
@@ -125,6 +154,8 @@ export default function CatClient({ isPremium }: { isPremium: boolean }) {
     setHistory([]);
     setSaved(false);
     savedRef.current = false;
+    setSecondsLeft(75 * 60);
+    setTimedOut(false);
   }
 
   if (!isPremium) {
@@ -167,7 +198,7 @@ export default function CatClient({ isPremium }: { isPremium: boolean }) {
           <div className="mt-5 space-y-2 text-sm text-slate-600">
             <p>▸ Starts easy. Answer correctly and questions get harder; miss one and they get easier.</p>
             <p>▸ The exam stops early once it is 95% confident you are clearly above — or clearly below — the passing standard.</p>
-            <p>▸ There is no timer. Focus on clinical judgement, not speed.</p>
+            <p>▸ Time budget: <strong>1 minute per question</strong> (75 items = 75 minutes). The clock only runs while the exam is open.</p>
             <p>▸ Every item includes a full rationale, and the result is saved to your Progress.</p>
           </div>
 
@@ -215,6 +246,11 @@ export default function CatClient({ isPremium }: { isPremium: boolean }) {
             {passed ? "PASS" : "BELOW STANDARD"}
           </h1>
           <p className="mt-2 text-sm text-slate-700">{state.reason}</p>
+          {timedOut && (
+            <p className="mt-3 rounded-xl bg-amber-50 px-4 py-2 text-xs text-amber-800 ring-1 ring-amber-200">
+              ⏱ Time expired — budget was 1 minute per item (75 minutes maximum).
+            </p>
+          )}
 
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
             <Info label="Items served" value={String(state.items ?? 0)} />
@@ -299,6 +335,18 @@ export default function CatClient({ isPremium }: { isPremium: boolean }) {
         </span>
         <span className="rounded-full bg-slate-100 px-3 py-1 text-xs text-slate-600">
           Next: {item?.difficulty ?? "…"}
+        </span>
+        <span
+          className={`rounded-lg px-3 py-1.5 font-mono text-xs font-bold ${
+            secondsLeft < 300
+              ? "bg-rose-50 text-rose-700"
+              : secondsLeft < 900
+                ? "bg-amber-50 text-amber-700"
+                : "bg-slate-100 text-slate-700"
+          }`}
+        >
+          ⏱ {String(Math.floor(secondsLeft / 60)).padStart(2, "0")}:
+          {String(secondsLeft % 60).padStart(2, "0")}
         </span>
       </div>
 

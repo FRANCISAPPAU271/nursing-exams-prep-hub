@@ -74,11 +74,12 @@ const TOUR_CHAPTERS = [
     badge: "Exam Simulation",
     summary: "Experience real test-day pressure with authentic timers, question counts, and full post-exam review.",
     visual: {
-      stat1: "NCLEX: 75 Qs / 90 min",
+      stat1: "1 min / question",
       stat2: "NMC CBT: 120 Qs / 4 hr",
       stat3: "Flagging & Review",
     },
     tips: [
+      "Budget: 1 minute per question — 75 items = 75 minutes.",
       "NCLEX Mock: 75 questions in 90 minutes with question navigator.",
       "UK NMC CBT Mock: 120 questions across 4 hours covering clinical care and numeracy.",
       "Flag difficult questions to review before submitting, then study every rationale.",
