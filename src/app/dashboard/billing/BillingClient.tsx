@@ -125,8 +125,10 @@ export default function BillingClient({
     const data = await res.json();
     setBusy("");
     if (!res.ok) return setMsg({ kind: "err", text: data.error ?? "Activation failed." });
-    setMsg({ kind: "ok", text: "🎉 Account activated! Pro features are unlocked." });
-    router.refresh();
+    setMsg({ kind: "ok", text: data.message ?? "🎉 Account activated! Pro features are unlocked." });
+    setTimeout(() => {
+      window.location.reload();
+    }, 1200);
   }
 
   return (
@@ -151,6 +153,22 @@ export default function BillingClient({
             : "Free plan"}
         </span>
       </header>
+
+      {isPremium && (
+        <section className="rounded-2xl border border-emerald-300 bg-gradient-to-r from-emerald-50 to-teal-50 p-6 shadow-sm">
+          <div className="flex items-center gap-3">
+            <span className="text-3xl">🎉</span>
+            <div>
+              <h2 className="text-lg font-bold text-emerald-950">
+                Your Account is Active on Pro ({plan})!
+              </h2>
+              <p className="mt-1 text-sm text-emerald-800">
+                All 32,000 NCLEX &amp; UK NMC questions, full timed 75 &amp; 120-question mock exams, and the complete video learning library are unlocked{planExpiresAt ? ` until ${new Date(planExpiresAt).toLocaleDateString()}` : ""}.
+              </p>
+            </div>
+          </div>
+        </section>
+      )}
 
       {msg && (
         <p
@@ -341,23 +359,35 @@ export default function BillingClient({
 
       {/* Activation */}
       <section className="rounded-2xl border border-slate-200 bg-white p-6">
-        <h2 className="font-semibold">Step 4 · Activate with your code</h2>
-        <p className="mt-1 text-sm text-slate-500">
-          Once your payment is confirmed a code appears below. Each code works once.
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h2 className="font-semibold">Step 4 · Activate with your code</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              {isPremium
+                ? "Your account is already active with Pro access. You can enter an additional code here to extend your subscription anytime."
+                : "Once your payment is confirmed, your activation code appears below. Enter it to unlock Pro immediately."}
+            </p>
+          </div>
+          {isPremium && (
+            <span className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-semibold text-emerald-800">
+              ✓ Pro Unlocked
+            </span>
+          )}
+        </div>
+
         {issued && (
-          <div className="mt-3 flex flex-wrap items-center gap-3 rounded-xl bg-emerald-50 p-4 ring-1 ring-emerald-200">
+          <div className="mt-4 flex flex-wrap items-center gap-3 rounded-xl bg-emerald-50 p-4 ring-1 ring-emerald-200">
             <div>
-              <p className="text-xs uppercase tracking-wide text-emerald-700">Your activation code</p>
+              <p className="text-xs uppercase tracking-wide text-emerald-700">Your latest activation code</p>
               <p className="mt-1 font-mono text-xl font-bold text-emerald-900">
                 {issued.activationCode}
               </p>
             </div>
             <button
               onClick={() => setCode(issued.activationCode!)}
-              className="ml-auto rounded-lg border border-emerald-300 bg-white px-3 py-1.5 text-xs font-medium"
+              className="ml-auto rounded-lg border border-emerald-300 bg-white px-3 py-1.5 text-xs font-medium hover:bg-emerald-100"
             >
-              Use this code
+              Copy to input
             </button>
           </div>
         )}
@@ -365,15 +395,15 @@ export default function BillingClient({
           <input
             className={`${input} max-w-xs font-mono uppercase`}
             value={code}
-            onChange={(e) => setCode(e.target.value.toUpperCase())}
+            onChange={(e) => setCode(e.target.value.toUpperCase().replace(/\s+/g, ""))}
             placeholder="PREP-XXXX-XXXX"
           />
           <button
             onClick={activate}
             disabled={busy === "activate" || !code}
-            className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60"
+            className="rounded-xl bg-teal-600 px-5 py-2.5 text-sm font-semibold text-white disabled:opacity-60 hover:bg-teal-700"
           >
-            {busy === "activate" ? "Activating…" : "Activate account"}
+            {busy === "activate" ? "Activating…" : isPremium ? "Extend subscription" : "Activate account"}
           </button>
         </div>
       </section>

@@ -165,15 +165,19 @@ export async function getCurrentUser() {
     .where(eq(sessions.id, id))
     .catch(() => {});
 
-  const active =
+  // Active if valid paid plan, or if user is an administrator (admins have full access)
+  const isPaidActive =
     row.plan !== "free" && (!row.planExpiresAt || row.planExpiresAt.getTime() > Date.now());
+  const active = isPaidActive || row.role === "admin";
+
+  const effectivePlan = isPaidActive ? row.plan : row.role === "admin" ? "admin" : "free";
 
   return {
     id: row.id,
     name: row.name,
     email: row.email,
     role: row.role,
-    plan: active ? row.plan : "free",
+    plan: effectivePlan,
     planExpiresAt: row.planExpiresAt ? row.planExpiresAt.toISOString() : null,
     isPremium: active,
     referralCode: row.referralCode ?? "",

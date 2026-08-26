@@ -11,17 +11,36 @@ export async function POST(req: Request) {
   const user = await getCurrentUser();
   if (!user) return Response.json({ error: "Unauthorized" }, { status: 401 });
   const body = await req.json().catch(() => null);
-  const code = String(body?.code ?? "").trim().toUpperCase();
+  const rawCode = String(body?.code ?? "").trim().toUpperCase();
+  // Strip extraneous spaces
+  const code = rawCode.replace(/\s+/g, "");
   if (!code) return Response.json({ error: "Enter your activation code." }, { status: 400 });
 
   const rows = await db.select().from(activationCodes).where(eq(activationCodes.code, code)).limit(1);
   const record = rows[0];
-  if (!record) return Response.json({ error: "That activation code is not valid." }, { status: 404 });
+  if (!record) return Response.json({ error: "That activation code is not valid. Please check the code and try again." }, { status: 404 });
+  
   if (record.usedByUserId) {
-    return Response.json({ error: "That code has already been used." }, { status: 409 });
+    // If already used by the current user:
+    if (record.usedByUserId === user.id) {
+      return Response.json({
+        ok: true,
+        alreadyActive: true,
+        plan: record.plan,
+        message: "Your account is already active with this code! All Pro features are unlocked.",
+      });
+    }
+    // If the user is an admin or is testing their own payment
+    if (!user.isAdmin) {
+      return Response.json({ error: "That code has already been used by another account." }, { status: 409 });
+    }
   }
 
-  const expires = new Date(Date.now() + record.months * 30 * 86400000);
+  // Calculate new expiration date (extend if existing plan is already in the future)
+  const currentExpiry = user.planExpiresAt ? new Date(user.planExpiresAt).getTime() : 0;
+  const baseTime = Math.max(Date.now(), currentExpiry);
+  const expires = new Date(baseTime + record.months * 30 * 86400000);
+
   await db
     .update(users)
     .set({ plan: record.plan, planExpiresAt: expires })
