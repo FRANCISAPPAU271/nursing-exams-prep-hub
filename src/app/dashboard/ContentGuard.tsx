@@ -42,7 +42,19 @@ export default function ContentGuard({
       }).catch(() => {});
     };
 
-    const onBlur = () => setHidden(true);
+    const onBlur = () => {
+      // Delay slightly to check if the active element is an iframe (e.g. video player).
+      // Clicking inside an embedded video moves browser focus into the iframe, which fires
+      // a window blur event. We must NOT hide content in that case.
+      setTimeout(() => {
+        if (document.activeElement && document.activeElement.tagName === "IFRAME") {
+          return;
+        }
+        if (document.visibilityState === "hidden") {
+          setHidden(true);
+        }
+      }, 100);
+    };
     const onFocus = () => setHidden(false);
     const onVisibility = () => setHidden(document.visibilityState !== "visible");
 

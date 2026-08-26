@@ -18,6 +18,7 @@ npm-debug.log*
 .DS_Store
 .idea/
 .vscode/
+*.tsbuildinfo
 
 # Drizzle generated migrations (keep schema.ts as source of truth)
 drizzle/
