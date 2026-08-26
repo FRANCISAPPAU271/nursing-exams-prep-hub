@@ -130,6 +130,20 @@ export async function revokeOtherSessions(userId: number, keepSessionId: string)
   return rows.length;
 }
 
+/**
+ * Auto sign-out after inactivity.
+ *
+ * IMPORTANT: this is a *server-enforced* safety net for shared study-hall
+ * computers. The client sends a heartbeat while the user is genuinely active,
+ * so anyone reading, scrolling or answering questions stays signed in. Only a
+ * genuinely abandoned tab goes stale and is revoked.
+ *
+ * Set to 20 minutes: long enough that a student can sit and reason through a
+ * hard exam question without being logged out mid-thought, short enough that an
+ * unattended laptop cannot be used by the next person.
+ */
+export const INACTIVITY_LIMIT_MS = 20 * 60 * 1000;
+
 export async function getCurrentUser() {
   const store = await cookies();
   const id = store.get(SESSION_COOKIE)?.value;
@@ -147,6 +161,7 @@ export async function getCurrentUser() {
       walletBalance: users.walletBalance,
       expiresAt: sessions.expiresAt,
       revokedAt: sessions.revokedAt,
+      lastSeenAt: sessions.lastSeenAt,
     })
     .from(sessions)
     .innerJoin(users, eq(users.id, sessions.userId))
@@ -159,11 +174,30 @@ export async function getCurrentUser() {
   if (row.revokedAt) return null;
   if (row.expiresAt.getTime() < Date.now()) return null;
 
-  // Lightweight heartbeat (best-effort; never blocks the request path).
-  db.update(sessions)
-    .set({ lastSeenAt: new Date() })
-    .where(eq(sessions.id, id))
-    .catch(() => {});
+  // ── Inactivity timeout (server-enforced) ─────────────────────────
+  // If no authenticated request or heartbeat has been seen within the limit,
+  // revoke the session so the next person at the computer cannot use it.
+  const idleFor = Date.now() - row.lastSeenAt.getTime();
+  if (idleFor > INACTIVITY_LIMIT_MS) {
+    await db
+      .update(sessions)
+      .set({ revokedAt: new Date() })
+      .where(eq(sessions.id, id));
+    await db
+      .insert(securityEvents)
+      .values({
+        userId: row.id,
+        kind: "auto_signout",
+        detail: `Automatically signed out after ${Math.round(idleFor / 60000)} minutes of inactivity.`,
+        ip: "",
+      })
+      .catch(() => {});
+    return null;
+  }
+
+  // Heartbeat: marks this session as active. Fired on every authenticated
+  // request and by the client heartbeat while the user is genuinely present.
+  await db.update(sessions).set({ lastSeenAt: new Date() }).where(eq(sessions.id, id));
 
   // Active if valid paid plan, or if user is an administrator (admins have full access)
   const isPaidActive =

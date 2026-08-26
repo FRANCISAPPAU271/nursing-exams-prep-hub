@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { redirect } from "next/navigation";
 import Sidebar from "./Sidebar";
 import ContentGuard from "./ContentGuard";
+import InactivityGuard from "@/components/InactivityGuard";
 import { getCurrentUser } from "@/lib/auth";
 
 export const dynamic = "force-dynamic";
@@ -23,6 +24,7 @@ export default async function DashboardLayout({ children }: { children: ReactNod
       />
       <main className="min-w-0 flex-1 bg-slate-50 px-4 py-6 sm:px-8">{children}</main>
       <ContentGuard email={user.email} name={user.name} />
+      <InactivityGuard />
     </div>
   );
 }

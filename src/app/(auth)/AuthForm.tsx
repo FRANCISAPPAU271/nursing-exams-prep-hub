@@ -15,6 +15,7 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
   const [loading, setLoading] = useState(false);
   const params = useSearchParams();
   const [ref, setRef] = useState((params.get("ref") ?? "").toUpperCase());
+  const inactivityReason = params.get("reason") === "inactivity";
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -43,6 +44,12 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
           All Nursing Exams Prep Hub
         </Link>
         <div className="rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
+          {inactivityReason && (
+            <p className="mb-4 rounded-xl bg-amber-50 px-4 py-3 text-sm text-amber-900 ring-1 ring-amber-200">
+              ⏳ You were signed out automatically after a period of inactivity. Please sign in again
+              to continue studying.
+            </p>
+          )}
           <h1 className="text-2xl font-bold">{isRegister ? "Create your account" : "Welcome back"}</h1>
           <p className="mt-1 text-sm text-slate-500">
             {isRegister
