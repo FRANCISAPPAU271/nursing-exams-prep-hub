@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { DEFAULT_EXAM, getExam } from "@/lib/exams";
+import { buildExplanation } from "@/lib/explain";
+import AnswerBreakdown from "@/components/AnswerBreakdown";
 import ExamTabs from "../ExamTabs";
 
 type Q = {
@@ -226,7 +228,15 @@ export default function MockClient({ isPremium }: { isPremium: boolean }) {
                 </li>
               ))}
             </ul>
-            <p className="mt-3 rounded-xl bg-slate-50 p-3 text-sm text-slate-600">{q.rationale}</p>
+            <AnswerBreakdown
+              explanation={buildExplanation({
+                stem: q.stem,
+                rationale: q.rationale,
+                options: q.options,
+                correctIndex: q.correctIndex,
+                chosenIndex: answers[i] ?? null,
+              })}
+            />
           </div>
         ))}
       </div>

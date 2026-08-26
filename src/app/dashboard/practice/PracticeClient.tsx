@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { categoriesFor, DEFAULT_EXAM, getExam } from "@/lib/exams";
+import { buildExplanation } from "@/lib/explain";
+import AnswerBreakdown from "@/components/AnswerBreakdown";
 import ExamTabs from "../ExamTabs";
 
 type Q = {
@@ -221,12 +223,15 @@ export default function PracticeClient({ isPremium }: { isPremium: boolean }) {
         </div>
 
         {answered && (
-          <div className="mt-4 rounded-xl bg-slate-50 p-4 text-sm">
-            <p className="font-semibold text-slate-800">
-              {selected === current.correctIndex ? "✅ Correct" : "❌ Incorrect"}
-            </p>
-            <p className="mt-1 text-slate-600">{current.rationale}</p>
-          </div>
+          <AnswerBreakdown
+            explanation={buildExplanation({
+              stem: current.stem,
+              rationale: current.rationale,
+              options: current.options,
+              correctIndex: current.correctIndex,
+              chosenIndex: selected,
+            })}
+          />
         )}
 
         <div className="mt-5 flex justify-end">

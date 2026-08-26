@@ -4,6 +4,8 @@ import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { categoriesFor, DEFAULT_EXAM, getExam } from "@/lib/exams";
+import { buildExplanation } from "@/lib/explain";
+import AnswerBreakdown from "@/components/AnswerBreakdown";
 import ExamTabs from "../ExamTabs";
 
 type Item = {
@@ -365,20 +367,26 @@ export default function CatClient({ isPremium }: { isPremium: boolean }) {
           </div>
 
           {locked && (
-            <div
-              className={`mt-4 rounded-xl p-4 text-sm ring-1 ${
-                picked === item.correctIndex
-                  ? "bg-emerald-50 text-emerald-900 ring-emerald-200"
-                  : "bg-rose-50 text-rose-900 ring-rose-200"
-              }`}
-            >
-              <p className="font-semibold">
+            <>
+              <p
+                className={`mt-4 text-sm font-semibold ${
+                  picked === item.correctIndex ? "text-emerald-800" : "text-rose-800"
+                }`}
+              >
                 {picked === item.correctIndex
                   ? "✓ Correct — the algorithm will serve a harder item next."
                   : "✕ Incorrect — the algorithm will serve an easier item next."}
               </p>
-              <p className="mt-1 text-slate-700">{item.rationale}</p>
-            </div>
+              <AnswerBreakdown
+                explanation={buildExplanation({
+                  stem: item.stem,
+                  rationale: item.rationale,
+                  options: item.options,
+                  correctIndex: item.correctIndex,
+                  chosenIndex: picked,
+                })}
+              />
+            </>
           )}
 
           <div className="mt-5 flex justify-end">

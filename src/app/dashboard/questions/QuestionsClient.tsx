@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { categoriesFor, DEFAULT_EXAM, getExam } from "@/lib/exams";
+import { buildExplanation } from "@/lib/explain";
+import AnswerBreakdown from "@/components/AnswerBreakdown";
 import ExamTabs from "../ExamTabs";
 
 type Q = {
@@ -215,23 +217,18 @@ export default function QuestionsClient() {
                 })}
               </div>
 
-              {/* Feedback banner once answered */}
-              {picked[item.id] !== undefined && (
-                <div
-                  className={`mt-3 rounded-xl p-3 text-sm ring-1 ${
-                    picked[item.id] === item.correctIndex
-                      ? "bg-emerald-50 text-emerald-900 ring-emerald-200"
-                      : "bg-rose-50 text-rose-900 ring-rose-200"
-                  }`}
-                >
-                  <p className="font-semibold">
-                    {picked[item.id] === item.correctIndex
-                      ? "✓ Correct!"
-                      : `✕ Incorrect — the correct answer is ${"ABCD"[item.correctIndex]}.`}
-                  </p>
-                  <p className="mt-1 text-slate-700">{item.rationale}</p>
-                </div>
-              )}
+              {/* Deep explanation: why your answer is wrong + every option explained */}
+              {picked[item.id] !== undefined &&
+                (() => {
+                  const ex = buildExplanation({
+                    stem: item.stem,
+                    rationale: item.rationale,
+                    options: item.options,
+                    correctIndex: item.correctIndex,
+                    chosenIndex: picked[item.id],
+                  });
+                  return <AnswerBreakdown explanation={ex} />;
+                })()}
 
               <div className="mt-3 flex flex-wrap items-center gap-2">
                 {!picked[item.id] && (
