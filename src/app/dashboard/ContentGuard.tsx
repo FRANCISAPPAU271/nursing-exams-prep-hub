@@ -26,7 +26,6 @@ export default function ContentGuard({
   email: string;
   name: string;
 }) {
-  const [hidden, setHidden] = useState(false);
   const [warning, setWarning] = useState("");
 
   useEffect(() => {
@@ -41,22 +40,6 @@ export default function ContentGuard({
         keepalive: true,
       }).catch(() => {});
     };
-
-    const onBlur = () => {
-      // Delay slightly to check if the active element is an iframe (e.g. video player).
-      // Clicking inside an embedded video moves browser focus into the iframe, which fires
-      // a window blur event. We must NOT hide content in that case.
-      setTimeout(() => {
-        if (document.activeElement && document.activeElement.tagName === "IFRAME") {
-          return;
-        }
-        if (document.visibilityState === "hidden") {
-          setHidden(true);
-        }
-      }, 100);
-    };
-    const onFocus = () => setHidden(false);
-    const onVisibility = () => setHidden(document.visibilityState !== "visible");
 
     const onContext = (e: MouseEvent) => {
       e.preventDefault();
@@ -90,9 +73,6 @@ export default function ContentGuard({
       }
     };
 
-    window.addEventListener("blur", onBlur);
-    window.addEventListener("focus", onFocus);
-    document.addEventListener("visibilitychange", onVisibility);
     document.addEventListener("contextmenu", onContext);
     document.addEventListener("copy", onCopy);
     document.addEventListener("cut", onCopy);
@@ -100,9 +80,6 @@ export default function ContentGuard({
     document.addEventListener("keydown", onKey);
 
     return () => {
-      window.removeEventListener("blur", onBlur);
-      window.removeEventListener("focus", onFocus);
-      document.removeEventListener("visibilitychange", onVisibility);
       document.removeEventListener("contextmenu", onContext);
       document.removeEventListener("copy", onCopy);
       document.removeEventListener("cut", onCopy);
@@ -128,20 +105,6 @@ export default function ContentGuard({
           ))}
         </div>
       </div>
-
-      {/* Privacy blur when the tab is not focused (defeats most capture tools) */}
-      {hidden && (
-        <div className="fixed inset-0 z-[60] grid place-items-center bg-slate-900/80 backdrop-blur-xl">
-          <div className="max-w-sm rounded-2xl bg-white p-8 text-center shadow-2xl">
-            <p className="text-4xl">🔒</p>
-            <p className="mt-3 font-semibold text-slate-900">Content hidden</p>
-            <p className="mt-1 text-sm text-slate-600">
-              Study material is hidden while this tab is not in focus. Click here to continue.
-            </p>
-            <p className="mt-3 text-xs text-slate-400">Licensed to {email}</p>
-          </div>
-        </div>
-      )}
 
       {warning && (
         <div className="fixed bottom-5 left-1/2 z-[70] -translate-x-1/2 rounded-xl bg-slate-900 px-4 py-2.5 text-sm font-medium text-white shadow-xl">

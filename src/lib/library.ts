@@ -83,8 +83,8 @@ export type TopicVideoInfo = {
 
 export const TOPIC_VIDEO_MAP: Record<string, TopicVideoInfo> = {
   "Getting Started": {
-    youtubeId: "X9ZZ6tcxArI",
-    channel: "App Orientation & Clinical Prep",
+    youtubeId: "UxFCpHIJsiY",
+    channel: "RegisteredNurseRN (Pass NCLEX First Try & Exam Orientation)",
     keyPoints: [
       "Use the Study Task Manager to schedule daily 50-question review blocks.",
       "Switch between NCLEX and UK NMC tabs depending on your target license.",
@@ -97,8 +97,8 @@ export const TOPIC_VIDEO_MAP: Record<string, TopicVideoInfo> = {
     ],
   },
   "Study Planning": {
-    youtubeId: "Ug4fDIJNQhw",
-    channel: "NursingSOS & Study Strategy",
+    youtubeId: "gdnwec8GiLo",
+    channel: "SimpleNursing - Nurse Mike (3-Step NCLEX Study Plan)",
     keyPoints: [
       "Dedicate weeks 1-2 to high-yield fundamentals, pharmacology, and drug calculations.",
       "Weeks 3-4 focus on Med-Surg body systems: cardiovascular, respiratory, neuro, and renal.",
