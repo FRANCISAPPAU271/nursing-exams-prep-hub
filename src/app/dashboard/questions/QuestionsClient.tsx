@@ -29,6 +29,9 @@ export default function QuestionsClient() {
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(true);
   const [open, setOpen] = useState<number | null>(null);
+  // Selected answer per question id — makes options clickable with instant feedback
+  const [picked, setPicked] = useState<Record<number, number>>({});
+  const [score, setScore] = useState({ answered: 0, correct: 0 });
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -59,15 +62,48 @@ export default function QuestionsClient() {
               ? "Searching…"
               : `${total.toLocaleString()} ${getExam(exam).name}-style questions match your filters`}
           </p>
+          <p className="mt-1 text-xs text-slate-500">
+            Tap an option to answer — feedback and rationale appear instantly.
+          </p>
         </div>
-        <ExamTabs
-          value={exam}
-          onChange={(id) => {
-            setExam(id);
-            setCategory("");
-            setPage(1);
-          }}
-        />
+        <div className="flex flex-col items-end gap-2">
+          <ExamTabs
+            value={exam}
+            onChange={(id) => {
+              setExam(id);
+              setCategory("");
+              setPage(1);
+            }}
+          />
+          {score.answered > 0 && (
+            <div className="rounded-xl border border-slate-200 bg-white px-3 py-1.5 text-xs">
+              <span className="font-semibold text-slate-800">
+                {score.answered} answered
+              </span>
+              <span className="mx-1.5 text-slate-300">·</span>
+              <span
+                className={
+                  score.correct / score.answered >= 0.7
+                    ? "font-semibold text-emerald-700"
+                    : score.correct / score.answered >= 0.5
+                      ? "font-semibold text-amber-700"
+                      : "font-semibold text-rose-700"
+                }
+              >
+                {Math.round((score.correct / score.answered) * 100)}% correct
+              </span>
+              <button
+                onClick={() => {
+                  setPicked({});
+                  setScore({ answered: 0, correct: 0 });
+                }}
+                className="ml-2 text-slate-400 underline hover:text-slate-700"
+              >
+                reset
+              </button>
+            </div>
+          )}
+        </div>
       </header>
 
       <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-3">
@@ -133,34 +169,99 @@ export default function QuestionsClient() {
                 <span className="ml-auto text-slate-400">#{item.id}</span>
               </div>
               <p className="font-medium">{item.stem}</p>
-              <ol className="mt-3 space-y-1.5 text-sm">
+
+              {/* Clickable answer options with instant feedback */}
+              <div className="mt-3 space-y-2">
                 {item.options.map((o, i) => {
-                  const revealed = open === item.id;
-                  const correct = i === item.correctIndex;
+                  const chosen = picked[item.id];
+                  const answered = chosen !== undefined;
+                  const isCorrect = i === item.correctIndex;
+                  const isChosen = chosen === i;
+
+                  let cls =
+                    "border-slate-200 bg-white hover:border-teal-400 hover:bg-teal-50/50 cursor-pointer";
+                  if (answered && isCorrect) cls = "border-emerald-400 bg-emerald-50 text-emerald-950";
+                  else if (answered && isChosen) cls = "border-rose-400 bg-rose-50 text-rose-950";
+                  else if (answered) cls = "border-slate-200 bg-white opacity-60 cursor-default";
+
                   return (
-                    <li
+                    <button
                       key={i}
-                      className={`rounded-lg border px-3 py-2 ${
-                        revealed && correct
-                          ? "border-emerald-300 bg-emerald-50 text-emerald-900"
-                          : "border-slate-200"
-                      }`}
+                      type="button"
+                      disabled={answered}
+                      onClick={() => {
+                        setPicked((p) => ({ ...p, [item.id]: i }));
+                        setScore((s) => ({
+                          answered: s.answered + 1,
+                          correct: s.correct + (i === item.correctIndex ? 1 : 0),
+                        }));
+                      }}
+                      className={`flex w-full items-start gap-2.5 rounded-xl border px-3.5 py-2.5 text-left text-sm transition ${cls}`}
                     >
-                      <span className="mr-2 font-semibold text-slate-400">{"ABCD"[i]}.</span>
-                      {o}
-                    </li>
+                      <span
+                        className={`grid h-6 w-6 flex-shrink-0 place-items-center rounded-full text-xs font-bold ${
+                          answered && isCorrect
+                            ? "bg-emerald-500 text-white"
+                            : answered && isChosen
+                              ? "bg-rose-500 text-white"
+                              : "bg-slate-100 text-slate-500"
+                        }`}
+                      >
+                        {answered && isCorrect ? "✓" : answered && isChosen ? "✕" : "ABCD"[i]}
+                      </span>
+                      <span className="flex-1">{o}</span>
+                    </button>
                   );
                 })}
-              </ol>
-              <button
-                onClick={() => setOpen(open === item.id ? null : item.id)}
-                className="mt-3 rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium hover:bg-slate-50"
-              >
-                {open === item.id ? "Hide rationale" : "Show answer & rationale"}
-              </button>
-              {open === item.id && (
-                <p className="mt-3 rounded-xl bg-slate-50 p-3 text-sm text-slate-700">{item.rationale}</p>
+              </div>
+
+              {/* Feedback banner once answered */}
+              {picked[item.id] !== undefined && (
+                <div
+                  className={`mt-3 rounded-xl p-3 text-sm ring-1 ${
+                    picked[item.id] === item.correctIndex
+                      ? "bg-emerald-50 text-emerald-900 ring-emerald-200"
+                      : "bg-rose-50 text-rose-900 ring-rose-200"
+                  }`}
+                >
+                  <p className="font-semibold">
+                    {picked[item.id] === item.correctIndex
+                      ? "✓ Correct!"
+                      : `✕ Incorrect — the correct answer is ${"ABCD"[item.correctIndex]}.`}
+                  </p>
+                  <p className="mt-1 text-slate-700">{item.rationale}</p>
+                </div>
               )}
+
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                {!picked[item.id] && (
+                  <span className="text-xs text-slate-400">
+                    Select an answer above to reveal the rationale.
+                  </span>
+                )}
+                {picked[item.id] !== undefined && (
+                  <button
+                    onClick={() =>
+                      setPicked((p) => {
+                        const n = { ...p };
+                        delete n[item.id];
+                        return n;
+                      })
+                    }
+                    className="rounded-lg border border-slate-300 px-3 py-1.5 text-xs font-medium hover:bg-slate-50"
+                  >
+                    ↺ Try again
+                  </button>
+                )}
+                <span className="ml-auto flex flex-wrap gap-2 text-xs">
+                  <span className="rounded-full bg-slate-100 px-2.5 py-1 text-slate-600">
+                    {item.category}
+                  </span>
+                  <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-indigo-700">
+                    {item.clientNeed}
+                  </span>
+                </span>
+              </div>
             </li>
           ))}
         </ul>
