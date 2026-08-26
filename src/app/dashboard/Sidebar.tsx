@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 const NAV = [
@@ -27,13 +27,20 @@ export default function Sidebar({
   user: { name: string; email: string; plan: string; isPremium: boolean; isAdmin: boolean };
 }) {
   const pathname = usePathname();
-  const router = useRouter();
   const [open, setOpen] = useState(false);
 
+  const [signingOut, setSigningOut] = useState(false);
+
   async function logout() {
-    await fetch("/api/auth/logout", { method: "POST" });
-    router.push("/login");
-    router.refresh();
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+    } catch {
+      // Even if the request fails, clear the client and send them to login.
+    }
+    // Hard navigation guarantees the protected page and cached state are dropped.
+    window.location.href = "/login";
   }
 
   const items = user.isAdmin
@@ -41,7 +48,7 @@ export default function Sidebar({
     : NAV;
 
   const nav = (
-    <nav className="flex flex-1 flex-col gap-1">
+    <nav className="flex flex-col gap-1">
       {items.map((item) => {
         const active = pathname === item.href;
         return (
@@ -89,9 +96,10 @@ export default function Sidebar({
       </div>
       <button
         onClick={logout}
-        className="w-full rounded-lg border border-white/15 px-3 py-2 text-sm text-slate-300 hover:bg-white/5"
+        disabled={signingOut}
+        className="flex w-full items-center justify-center gap-2 rounded-lg border border-white/15 px-3 py-2.5 text-sm font-medium text-slate-200 transition hover:bg-white/10 disabled:opacity-60"
       >
-        Sign out
+        {signingOut ? "Signing out…" : "Sign out"}
       </button>
     </div>
   );
@@ -103,23 +111,35 @@ export default function Sidebar({
           <span className="grid h-8 w-8 place-items-center rounded-lg bg-teal-500 text-white">✚</span>
           All Nursing Exams Prep Hub
         </span>
-        <button
-          onClick={() => setOpen((v) => !v)}
-          className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm"
-        >
-          {open ? "Close" : "Menu"}
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={logout}
+            disabled={signingOut}
+            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 disabled:opacity-60"
+          >
+            {signingOut ? "…" : "Sign out"}
+          </button>
+          <button
+            onClick={() => setOpen((v) => !v)}
+            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm"
+          >
+            {open ? "Close" : "Menu"}
+          </button>
+        </div>
       </div>
 
       <aside
-        className={`${open ? "flex" : "hidden"} w-full flex-col gap-4 bg-slate-900 p-4 lg:flex lg:h-screen lg:w-64 lg:flex-shrink-0 lg:sticky lg:top-0`}
+        className={`${open ? "flex" : "hidden"} w-full flex-col bg-slate-900 lg:sticky lg:top-0 lg:flex lg:h-screen lg:w-64 lg:flex-shrink-0`}
       >
-        <div className="hidden items-center gap-2 px-2 py-2 text-white lg:flex">
+        <div className="hidden items-center gap-2 px-4 py-4 text-white lg:flex">
           <span className="grid h-9 w-9 place-items-center rounded-xl bg-teal-500">✚</span>
           <span className="font-semibold">All Nursing Exams Prep Hub</span>
         </div>
-        {nav}
-        {footer}
+
+        {/* Scrollable middle so the footer (and Sign out) is always reachable */}
+        <div className="flex-1 overflow-y-auto px-4 py-3">{nav}</div>
+
+        <div className="border-t border-white/10 p-4">{footer}</div>
       </aside>
     </>
   );
