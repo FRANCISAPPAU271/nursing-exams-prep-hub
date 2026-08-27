@@ -17,21 +17,21 @@ export const FAQS: { q: string; a: string; group: string }[] = [
   {
     group: "Question bank",
     q: "How many questions are included?",
-    a: "Over 1,000 in total — 799 NCLEX items across 11 categories and 249 Midwifery items, every one unique with a full rationale. We deliberately do not pad the bank with repeated questions."
+    a: "The bank covers 10 nursing categories: cardiovascular, respiratory, endocrine, renal, neurological, gastrointestinal, maternal and child health, mental health, infection prevention, and fundamentals of nursing. Every question is unique and carries a full written rationale — we deliberately do not pad the bank with repeated questions."
   },
   {
     group: "Exams covered",
     q: "Which exams does the platform prepare me for?",
-    a: "Two tracks. The Midwifery track prepares you for the Nursing and Midwifery Council of Ghana midwifery licensing exam, covering antenatal care, labour, obstetric emergencies, the puerperium, newborn care, family planning and women's health. The NCLEX track covers NCLEX-RN and NCLEX-PN for the United States and Canada. Switch with one tap — questions, categories, mock format and lessons all follow you.",
+    a: "One question bank for all nurses. It is not tied to a single country's exam, so it is useful whether you are writing a licensing exam, a school assessment, or simply want to strengthen your clinical knowledge. You filter by the 10 nursing categories instead of by exam track."
   },
   {
     group: "Exams covered",
     q: "Do the mock exams match the real formats?",
-    a: "Yes. The NCLEX mock runs 75 questions in 90 minutes. The Midwifery mock runs 100 questions in 2 hours. Both use 1 minute per question pacing to build real exam stamina."
+    a: "Yes. The mock exam runs 100 questions in 100 minutes — one minute per question — to build real exam stamina and pacing."
   },
   {
     group: "Exams covered",
-    q: "Is there a separate Midwifery question bank?",
+    q: "What does the mock exam look like?",
     a: "Yes. The Midwifery track is a separately named bank with seven categories — Antenatal Care, Normal Labour & Delivery, Obstetric Emergencies, Puerperium & Postnatal Care, Newborn Care, Family Planning, and Gynaecology & Women's Health — plus its own mock exam and video lessons."
   },
   {

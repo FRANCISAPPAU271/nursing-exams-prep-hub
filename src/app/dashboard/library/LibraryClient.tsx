@@ -58,7 +58,7 @@ const TOUR_CHAPTERS = [
     summary: "Comprehensive item bank covering the NCLEX and Midwifery tracks — every question unique.",
     visual: {
       stat1: "🇺🇸 NCLEX",
-      stat2: "👶 Midwifery",
+      stat2: "10 Categories",
       stat3: "Detailed Rationales",
     },
     tips: [
@@ -220,7 +220,7 @@ export default function LibraryClient({
         <div>
           <h1 className="text-2xl font-bold">Learning Library</h1>
           <p className="text-sm text-slate-500">
-            {lessons.length} video lectures, interactive study tours & clinical guides — body systems, common conditions, care planning and Midwifery practice.
+            {lessons.length} video lectures, interactive study tours & clinical guides — body systems, clinical conditions, care planning and fundamentals.
           </p>
         </div>
         {!isPremium && (

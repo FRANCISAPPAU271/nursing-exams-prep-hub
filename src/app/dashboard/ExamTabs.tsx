@@ -9,6 +9,9 @@ export default function ExamTabs({
   value: string;
   onChange: (id: string) => void;
 }) {
+  // Only one exam track exists, so the switcher has nothing to do.
+  if (EXAMS.length < 2) return null;
+
   return (
     <div className="inline-flex rounded-xl border border-slate-200 bg-white p-1">
       {EXAMS.map((e) => (

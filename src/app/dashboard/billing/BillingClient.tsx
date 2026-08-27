@@ -163,7 +163,7 @@ export default function BillingClient({
                 Your Account is Active on Pro ({plan})!
               </h2>
               <p className="mt-1 text-sm text-emerald-800">
-                All 1,000+ NCLEX and Midwifery questions, adaptive CAT tests, full timed mock exams, care plans and the complete video learning library are unlocked{planExpiresAt ? ` until ${new Date(planExpiresAt).toLocaleDateString()}` : ""}.
+                All nursing questions, adaptive CAT tests, full timed mock exams, care plans and the complete video learning library are unlocked{planExpiresAt ? ` until ${new Date(planExpiresAt).toLocaleDateString()}` : ""}.
               </p>
             </div>
           </div>

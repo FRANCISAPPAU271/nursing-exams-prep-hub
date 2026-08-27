@@ -2,10 +2,7 @@ import "dotenv/config";
 import { db, pool } from "./index";
 import { attempts, lessons, payouts, questions, referrals, tasks, users } from "./schema";
 import { LESSON_SEEDS } from "../lib/library";
-import { CLIENT_NEED_DATA } from "../lib/client-need-data";
-import { GHANA_NMC_DATA } from "../lib/ghana-nmc-data";
-import { NCLEX_DATA } from "../lib/nclex-data";
-import { MIDWIFERY_DATA } from "../lib/midwifery-data";
+import { NURSING_DATA } from "../lib/nursing-data";
 import { buildReferralCode } from "../lib/referrals";
 import { hashPassword } from "../lib/auth";
 import { sql } from "drizzle-orm";
@@ -52,7 +49,7 @@ function shuffle<T>(arr: T[], seed: number): T[] {
   return a;
 }
 
-type T = { name: string; finding: string; action: string; drug: string; lab: string };
+type TopicEntry = { name: string; finding: string; action: string; drug: string; lab: string };
 
 /**
  * Ten question templates. Each tests a DIFFERENT competency on the same
@@ -60,7 +57,7 @@ type T = { name: string; finding: string; action: string; drug: string; lab: str
  * teaching, planning, prioritisation, evaluation, documentation and delegation.
  */
 function buildDrafts(
-  t: T,
+  t: TopicEntry,
   category: string,
   opts: { isMid: boolean; isGhana: boolean; topicLike?: boolean },
 ): { stem: string; correct: string; distractors: string[]; rationale: string }[] {
@@ -239,105 +236,18 @@ async function main() {
       });
     };
 
-    // ── NCLEX ───────────────────────────────────────────────────────
-    // Every question is generated twice and tagged on two independent axes:
-    //   category   -> one of the four official NCLEX Client Needs
-    //   bodySystem -> the body system / subject area
-    // so students can filter by either system without duplicating content.
-
-    // Map each clinical condition to its body system.
-    const bodyOf = new Map<string, string>();
-    for (const [system, condition] of NCLEX_DATA) bodyOf.set(condition, system);
-
-    // Client Need topics are practice areas rather than diseases, so they are
-    // mapped to the most relevant subject area for filtering purposes.
-    const TOPIC_BODY: Record<string, string> = {
-      "client identification safety": "Fundamentals",
-      "delegation and supervision": "Fundamentals",
-      "safety and fall prevention": "Fundamentals",
-      "infection control practice": "Safety & Infection",
-      "legal and ethical practice": "Fundamentals",
-      "emergency management": "Fundamentals",
-      "antenatal health education": "Maternal & Child",
-      "child growth and development": "Maternal & Child",
-      "chronic disease self-management": "Fundamentals",
-      "preventive screening": "Fundamentals",
-      "lifestyle and nutrition counselling": "Fundamentals",
-      "reproductive and family planning education": "Maternal & Child",
-      "newborn and infant care education": "Maternal & Child",
-      "suicide risk": "Psychosocial",
-      "acute psychosis": "Psychosocial",
-      "anxiety and panic": "Psychosocial",
-      "substance use and withdrawal": "Psychosocial",
-      "grief and loss": "Psychosocial",
-      "mental health in the community": "Psychosocial",
-      "therapeutic communication": "Psychosocial",
-      "recognising deterioration": "Fundamentals",
-      "prioritising multiple clients": "Fundamentals",
-      "interpreting assessment data": "Fundamentals",
-      "evaluating care effectiveness": "Fundamentals",
-      "clinical decision making": "Fundamentals",
-    };
-    const bodyFor = (condition: string) =>
-      bodyOf.get(condition) ?? TOPIC_BODY[condition] ?? "Fundamentals";
-
-    // Client Need tagged set
-    for (const [clientNeed, condition, facts] of CLIENT_NEED_DATA) {
-      const cat = { category: clientNeed, clientNeed };
-      const body = bodyFor(condition);
-      for (const [finding, action, drug, lab] of facts) {
-        const t: T = { name: condition, finding, action, drug, lab };
-        // Client Need entries are safety / education topics rather than
-        // diseases, so the wording must not read as "a client with <topic>".
-        const topicLike = CLIENT_NEED_TOPICS.has(condition);
-        for (const d of buildDrafts(t, clientNeed, { isMid: false, isGhana: false, topicLike })) {
-          push("NCLEX", cat, d, body);
-        }
-      }
-    }
-
-    // Body-system tagged set (same clinical facts, different grouping)
-    for (const [system, condition, facts] of NCLEX_DATA) {
-      const cat = { category: system, clientNeed: system };
-      for (const [finding, action, drug, lab] of facts) {
-        const t: T = { name: condition, finding, action, drug, lab };
-        for (const d of buildDrafts(t, system, { isMid: false, isGhana: false })) {
-          push("NCLEX", cat, d, system);
-        }
-      }
-    }
-
-    // ── Ghana NMC (Registered General Nursing) ─────────────────────
-    // Capped at 4 facts per condition so the track lands near 2,000 unique
-    // questions while every generated item stays distinct.
-    const GHANA_FACTS_PER_CONDITION = 5;
-    for (const [category, condition, facts] of GHANA_NMC_DATA) {
+    // ── Question Bank for All Nurses ───────────────────────────────
+    // One unified track. Every question is built from a distinct clinical
+    // fact, so no two questions test the same thing twice.
+    for (const [category, topic, facts] of NURSING_DATA) {
       const cat = { category, clientNeed: category };
-      for (const [finding, action, drug, lab] of facts.slice(0, GHANA_FACTS_PER_CONDITION)) {
-        const t: T = { name: condition, finding, action, drug, lab };
-        // Policy, system and professional-practice topics are not diseases,
-        // so the wording must not read as "a patient with <topic>".
-        const ghanaTopic = category === "Professional Practice & NMC Ghana Code" ||
-          category === "Ghana Health System & CHPS";
-        for (const d of buildDrafts(t, category, {
-          isMid: false, isGhana: true, topicLike: ghanaTopic,
-        })) {
-          push("GHANA_NMC", cat, d);
-        }
-      }
-    }
-
-    // ── Midwifery ───────────────────────────────────────────────────
-    for (const [category, condition, facts] of MIDWIFERY_DATA) {
-      const cat = { category, clientNeed: "Midwifery Practice" };
-      // Midwifery uses a subset of templates to keep stems unique across facts
-      const midIdx = [0, 1, 2, 3, 4];
       for (const [finding, action, drug, lab] of facts) {
-        const t: T = { name: condition, finding, action, drug, lab };
-        const all = buildDrafts(t, category, { isMid: true, isGhana: true });
-        midIdx.forEach((i) => {
-          if (all[i]) push("MIDWIFERY", cat, all[i]);
-        });
+        const t: TopicEntry = { name: topic, finding, action, drug, lab };
+        for (const d of buildDrafts(t, category, {
+          isMid: false, isGhana: true, topicLike: false,
+        })) {
+          push("ALL_NURSES", cat, d);
+        }
       }
     }
 

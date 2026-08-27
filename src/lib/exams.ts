@@ -1,4 +1,4 @@
-export type ExamId = "NCLEX" | "GHANA_NMC" | "MIDWIFERY";
+export type ExamId = "ALL_NURSES";
 
 export type Exam = {
   id: ExamId;
@@ -13,62 +13,29 @@ export type Exam = {
 
 export const EXAMS: Exam[] = [
   {
-    id: "NCLEX",
-    name: "NCLEX",
-    full: "NCLEX-RN / NCLEX-PN (USA & Canada)",
-    flag: "🇺🇸",
+    id: "ALL_NURSES",
+    name: "Question Bank",
+    full: "Question Bank for All Nurses",
+    flag: "🩺",
     blurb:
-      "Licensure for registered and practical nurses in the United States and Canada, built around the four Client Needs categories.",
-    mock: { questions: 75, minutes: 90, label: "75 questions · 90 minutes" },
+      "A single question bank for every nurse — student or qualified, in any speciality. Clinical nursing, medicines, maternal and child health, mental health, infection prevention and fundamentals, each question with a full rationale.",
+    mock: { questions: 100, minutes: 100, label: "100 questions · 100 minutes" },
     categories: [
-      "Safe and Effective Care Environment",
-      "Health Promotion and Maintenance",
-      "Psychosocial Integrity",
-      "Clinical Judgement",
-    ],
-  },
-  {
-    id: "GHANA_NMC",
-    name: "Ghana NMC",
-    full: "NMC Ghana Licensing Examination — Registered General Nursing",
-    flag: "🇬🇭",
-    blurb:
-      "The Nursing and Midwifery Council of Ghana licensing exam for Registered General Nursing. Ghana clinical practice, the Ghana Health System, CHPS, and national treatment guidelines.",
-    mock: { questions: 100, minutes: 120, label: "100 questions · 2 hours" },
-    categories: [
-      "Ghana Health System & CHPS",
-      "Medical-Surgical Nursing (Ghana)",
-      "Pharmacology & Ghana STG",
-      "Community Health Nursing",
-      "Maternal & Newborn Care",
-      "Child Health (Ghana)",
+      "Cardiovascular Nursing",
+      "Respiratory Nursing",
+      "Endocrine Nursing",
+      "Renal Nursing",
+      "Neurological Nursing",
+      "Gastrointestinal Nursing",
+      "Maternal & Child Health",
       "Mental Health Nursing",
-      "Communicable Diseases (Ghana)",
-      "Professional Practice & NMC Ghana Code",
-      "Emergency & Critical Care",
-    ],
-  },
-  {
-    id: "MIDWIFERY",
-    name: "Midwifery",
-    full: "NMC Ghana Licensing Examination — Midwifery",
-    flag: "👶",
-    blurb:
-      "A dedicated midwifery question bank: antenatal care, normal and complicated labour, obstetric emergencies, the puerperium, newborn care, family planning and women's health.",
-    mock: { questions: 100, minutes: 120, label: "100 questions · 2 hours" },
-    categories: [
-      "Antenatal Care",
-      "Normal Labour & Delivery",
-      "Obstetric Emergencies",
-      "Puerperium & Postnatal Care",
-      "Newborn Care",
-      "Family Planning",
-      "Gynaecology & Women's Health",
+      "Infection Prevention",
+      "Fundamentals of Nursing",
     ],
   },
 ];
 
-export const DEFAULT_EXAM: ExamId = "NCLEX";
+export const DEFAULT_EXAM: ExamId = "ALL_NURSES";
 
 export function getExam(id: string): Exam {
   return EXAMS.find((e) => e.id === id) ?? EXAMS[0];
@@ -78,7 +45,7 @@ export function categoriesFor(examId: string) {
   return getExam(examId).categories;
 }
 
-/** All categories across every exam track (used by the study task manager). */
+/** All categories across every track. */
 export const ALL_CATEGORIES = Array.from(
   new Set(EXAMS.flatMap((e) => e.categories)),
 );

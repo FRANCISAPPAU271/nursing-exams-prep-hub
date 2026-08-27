@@ -2,7 +2,6 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { categoriesFor, DEFAULT_EXAM, getExam } from "@/lib/exams";
-import { NCLEX_BODY_SYSTEMS as BODY_SYSTEMS } from "@/lib/nclex-data";
 import { buildExplanation } from "@/lib/explain";
 import AnswerBreakdown from "@/components/AnswerBreakdown";
 import ExamTabs from "../ExamTabs";
@@ -135,21 +134,7 @@ export default function QuestionsClient() {
             <option key={c}>{c}</option>
           ))}
         </select>
-        {exam === "NCLEX" && (
-          <select
-            className={input}
-            value={bodySystem}
-            onChange={(e) => {
-              setPage(1);
-              setBodySystem(e.target.value);
-            }}
-          >
-            <option value="">All body systems</option>
-            {BODY_SYSTEMS.map((c) => (
-              <option key={c}>{c}</option>
-            ))}
-          </select>
-        )}
+
         <select
           className={input}
           value={difficulty}

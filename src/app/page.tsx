@@ -16,7 +16,7 @@ const FEATURES = [
   {
     icon: "❓",
     title: "1,000+ practice questions",
-    body: "1,000+ NCLEX and Midwifery items — every one unique, tagged by category and difficulty, with a written rationale.",
+    body: "A growing bank of unique nursing questions across 10 categories, each with a full written rationale.",
   },
   {
     icon: "☑",
@@ -109,7 +109,7 @@ export default async function Home() {
                 1,000+ practice questions with rationales
               </span>
               <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
-                NMC exams and NCLEX{" "}
+                Nursing exams{" "}
                 <span className="text-teal-700">with a plan, not panic.</span>
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
@@ -167,7 +167,7 @@ export default async function Home() {
             <dl className="mx-auto grid max-w-6xl grid-cols-2 divide-slate-200 px-5 sm:divide-x lg:grid-cols-4">
               {[
                 ["1,000+", "Unique practice questions"],
-                ["2", "Exam tracks: NMC & NCLEX"],
+                ["10", "Nursing categories"],
                 ["47", "Video lessons"],
                 ["20", "Specialty categories"],
               ].map(([v, l]) => (
@@ -278,8 +278,7 @@ export default async function Home() {
                 ["🫀", "Body Systems", "12 lessons", "Cardiovascular, respiratory, renal, neuro and more."],
                 ["🩺", "Common Conditions", "15 lessons", "Heart failure, DKA, sepsis, stroke, preeclampsia."],
                 ["📋", "Care Plans & Process", "8 lessons", "ADPIE, NANDA diagnoses, SMART goals, SBAR."],
-                ["👶", "Midwifery Practice", "10 lessons", "Antenatal, labour, obstetric emergencies and newborn care."],
-              ].map(([icon, title, count, body]) => (
+                              ].map(([icon, title, count, body]) => (
                 <div key={title} className="rounded-2xl border border-slate-200 bg-white p-5">
                   <span className="text-2xl">{icon}</span>
                   <h3 className="mt-2 font-semibold">{title}</h3>
