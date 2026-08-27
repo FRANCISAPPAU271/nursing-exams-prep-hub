@@ -1,4 +1,4 @@
-export type ExamId = "NCLEX" | "MIDWIFERY";
+export type ExamId = "NCLEX" | "GHANA_NMC" | "MIDWIFERY";
 
 export type Exam = {
   id: ExamId;
@@ -25,6 +25,27 @@ export const EXAMS: Exam[] = [
       "Health Promotion and Maintenance",
       "Psychosocial Integrity",
       "Clinical Judgement",
+    ],
+  },
+  {
+    id: "GHANA_NMC",
+    name: "Ghana NMC",
+    full: "NMC Ghana Licensing Examination — Registered General Nursing",
+    flag: "🇬🇭",
+    blurb:
+      "The Nursing and Midwifery Council of Ghana licensing exam for Registered General Nursing. Ghana clinical practice, the Ghana Health System, CHPS, and national treatment guidelines.",
+    mock: { questions: 100, minutes: 120, label: "100 questions · 2 hours" },
+    categories: [
+      "Ghana Health System & CHPS",
+      "Medical-Surgical Nursing (Ghana)",
+      "Pharmacology & Ghana STG",
+      "Community Health Nursing",
+      "Maternal & Newborn Care",
+      "Child Health (Ghana)",
+      "Mental Health Nursing",
+      "Communicable Diseases (Ghana)",
+      "Professional Practice & NMC Ghana Code",
+      "Emergency & Critical Care",
     ],
   },
   {

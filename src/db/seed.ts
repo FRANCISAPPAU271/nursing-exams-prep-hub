@@ -3,6 +3,7 @@ import { db, pool } from "./index";
 import { attempts, lessons, payouts, questions, referrals, tasks, users } from "./schema";
 import { LESSON_SEEDS } from "../lib/library";
 import { CLIENT_NEED_DATA } from "../lib/client-need-data";
+import { GHANA_NMC_DATA } from "../lib/ghana-nmc-data";
 import { NCLEX_DATA } from "../lib/nclex-data";
 import { MIDWIFERY_DATA } from "../lib/midwifery-data";
 import { buildReferralCode } from "../lib/referrals";
@@ -80,8 +81,8 @@ function buildDrafts(
   return [
     {
       stem: topicLike
-        ? `A ${NURSE} is involved in ${t.name}. Which situation should be reported to the ${PROVIDER}?`
-        : `${scenario} Which finding should be reported to the ${PROVIDER}?`,
+        ? `A ${NURSE} is involved in ${t.name} and observes that ${t.finding}. Which action should be reported to the ${PROVIDER}?`
+        : `${scenario} The ${P} has ${t.finding}. Which action should be reported to the ${PROVIDER}?`,
       correct: topicLike
         ? `A situation where ${t.finding} is present.`
         : `${Pc} has ${t.finding}.`,
@@ -106,8 +107,8 @@ function buildDrafts(
     },
     {
       stem: topicLike
-        ? `A ${NURSE} is managing a situation ${rel}. Which action is most appropriate for the ${NURSE} to take?`
-        : `${scenario} Which medicine or therapy is most relevant to this ${P}'s care?`,
+        ? `A ${NURSE} is managing ${t.name} where the plan is to ${t.action}. Which step is most appropriate?`
+        : `A ${P} with ${t.name} is to receive ${t.drug} because of ${t.finding}. Which therapy is being used?`,
       correct: topicLike ? `${cap(t.action)}.` : `${cap(t.drug)}.`,
       distractors: [
         "A medicine with no indication for this condition.",
@@ -117,7 +118,7 @@ function buildDrafts(
       rationale: `${cap(t.drug)} is the relevant therapy in ${t.name} where ${t.finding} is present. The other options are not indicated, are contraindicated, or address a different problem.`,
     },
     {
-      stem: `A ${NURSE} is reviewing results ${rel}. Which is most important to monitor?`,
+      stem: `A ${NURSE} is reviewing a ${P} with ${t.name} who has ${t.finding}. Which result is most important to monitor?`,
       correct: `The ${t.lab}.`,
       distractors: [
         "A serum amylase taken on admission.",
@@ -127,7 +128,7 @@ function buildDrafts(
       rationale: `The ${t.lab} directly reflects the status of ${t.name} and guides treatment decisions. The other results do not measure this problem.`,
     },
     {
-      stem: `A ${NURSE} is giving information ${rel}. Which ${P} statement shows correct understanding?`,
+      stem: `A ${NURSE} is teaching a ${P} with ${t.name} to report ${t.finding}. Which statement shows correct understanding?`,
       correct: `\u201cI will report ${t.finding} straight away.\u201d`,
       distractors: [
         "\u201cI can stop all of my medicines once I feel better.\u201d",
@@ -137,7 +138,7 @@ function buildDrafts(
       rationale: `Recognising and reporting ${t.finding} promotes early intervention in ${t.name}. The other statements describe unsafe self-management and need further teaching.`,
     },
     {
-      stem: `A ${NURSE} is planning care ${rel}. Which intervention should be included?`,
+      stem: `A ${NURSE} is planning care for a ${P} with ${t.name} whose plan includes to ${t.action}. Which intervention should be included?`,
       correct: `${cap(t.action)}.`,
       distractors: [
         `Limit the ${P}'s fluid intake to 500 mL daily without a prescription.`,
@@ -157,7 +158,7 @@ function buildDrafts(
       rationale: `The ${P} with ${t.finding} shows a change in condition and takes priority using the ABC and acute-versus-chronic frameworks.`,
     },
     {
-      stem: `A ${NURSE} is evaluating care ${rel}. Which outcome shows the plan is working?`,
+      stem: `A ${NURSE} is evaluating a ${P} being treated for ${t.name} where the ${t.lab} is being monitored. Which outcome shows the plan is working?`,
       correct: `The ${t.lab} trends towards the expected reference range.`,
       distractors: [
         `The ${P} sleeps more than fourteen hours per day.`,
@@ -167,7 +168,7 @@ function buildDrafts(
       rationale: `Improvement in the ${t.lab} shows a therapeutic response in ${t.name}. The other findings indicate deterioration.`,
     },
     {
-      stem: `In ${category.toLowerCase()}, which record entry about ${t.name} is most appropriate?`,
+      stem: `In ${category.toLowerCase()}, which record entry about a ${P} with ${t.name} and ${t.finding} is most appropriate?`,
       correct: `\u201c${topicLike ? `${cap(t.finding)} observed` : `${Pc} has ${t.finding}`}; ${NURSE} acted to ${t.action}; ${PROVIDER} informed.\u201d`,
       distractors: [
         `\u201c${Pc} appears to be doing poorly today.\u201d`,
@@ -177,7 +178,7 @@ function buildDrafts(
       rationale: `Documentation must be objective and state the finding, the action taken, and who was informed. Subjective or judgemental entries are inappropriate and indefensible.`,
     },
     {
-      stem: `Which task relating to ${t.name} may safely be delegated to a ${who}?`,
+      stem: `A ${P} with ${t.name} is on ${t.drug} and needs ${t.lab} checked. Which task may be delegated to a ${who}?`,
       correct: `Obtaining and recording routine observations for a stable ${P}.`,
       distractors: [
         `Evaluating the ${P}'s response to ${t.drug}.`,
@@ -215,11 +216,15 @@ async function main() {
       bodySystem?: string,
     ) => {
       n++;
-      if (seen.has(d.stem)) {
+      // Enforce uniqueness within each exam: a topic appearing in two
+      // categories, or in two exam tracks, must not produce a duplicate
+      // for the student sitting that paper.
+      const key = `${exam}::${d.stem}`;
+      if (seen.has(key)) {
         skipped++;
         return;
       }
-      seen.add(d.stem);
+      seen.add(key);
       const opts = shuffle([d.correct, ...d.distractors], n * 7);
       rows.push({
         exam,
@@ -298,6 +303,26 @@ async function main() {
         const t: T = { name: condition, finding, action, drug, lab };
         for (const d of buildDrafts(t, system, { isMid: false, isGhana: false })) {
           push("NCLEX", cat, d, system);
+        }
+      }
+    }
+
+    // ── Ghana NMC (Registered General Nursing) ─────────────────────
+    // Capped at 4 facts per condition so the track lands near 2,000 unique
+    // questions while every generated item stays distinct.
+    const GHANA_FACTS_PER_CONDITION = 5;
+    for (const [category, condition, facts] of GHANA_NMC_DATA) {
+      const cat = { category, clientNeed: category };
+      for (const [finding, action, drug, lab] of facts.slice(0, GHANA_FACTS_PER_CONDITION)) {
+        const t: T = { name: condition, finding, action, drug, lab };
+        // Policy, system and professional-practice topics are not diseases,
+        // so the wording must not read as "a patient with <topic>".
+        const ghanaTopic = category === "Professional Practice & NMC Ghana Code" ||
+          category === "Ghana Health System & CHPS";
+        for (const d of buildDrafts(t, category, {
+          isMid: false, isGhana: true, topicLike: ghanaTopic,
+        })) {
+          push("GHANA_NMC", cat, d);
         }
       }
     }
