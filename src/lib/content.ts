@@ -187,9 +187,9 @@ export const STRATEGIES: Strategy[] = [
       "If two options are opposites, the answer is frequently one of them.",
     ],
     video: {
-      youtubeId: "UxFCpHIJsiY",
-      channel: "RegisteredNurseRN",
-      label: "How I passed NCLEX first try",
+      youtubeId: "X9ZZ6tcxArI",
+      channel: "CrashCourse Anatomy & Physiology",
+      label: "Building the clinical knowledge behind the options",
     }
   },
   {
@@ -203,9 +203,9 @@ export const STRATEGIES: Strategy[] = [
       "Exhibit items: read the tabs in order — vitals, labs, then provider notes.",
     ],
     video: {
-      youtubeId: "gdnwec8GiLo",
-      channel: "SimpleNursing — Nurse Mike",
-      label: "3-step NCLEX study plan",
+      youtubeId: "Oc9e-9HEsOE",
+      channel: "RegisteredNurseRN",
+      label: "Applying clinical reasoning to eliminate options",
     }
   },
   {
@@ -219,9 +219,9 @@ export const STRATEGIES: Strategy[] = [
       "Client autonomy, informed consent and confidentiality are never violated.",
     ],
     video: {
-      youtubeId: "Oc9e-9HEsOE",
+      youtubeId: "UxFCpHIJsiY",
       channel: "RegisteredNurseRN",
-      label: "Heart failure management & nursing care",
+      label: "How to think like a safe, exam-ready nurse",
     }
   },
   {
@@ -236,9 +236,9 @@ export const STRATEGIES: Strategy[] = [
       "The number of questions you receive says nothing about pass or fail — keep going.",
     ],
     video: {
-      youtubeId: "29sJDWdLnNM",
-      channel: "RegisteredNurseRN",
-      label: "Myocardial infarction nursing management",
+      youtubeId: "gdnwec8GiLo",
+      channel: "SimpleNursing — Nurse Mike",
+      label: "Study planning, pacing & exam-day routine",
     }
   },
   {
