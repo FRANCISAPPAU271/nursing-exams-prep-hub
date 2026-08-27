@@ -105,6 +105,8 @@ export const questions = pgTable(
     category: text("category").notNull(),
     difficulty: text("difficulty").notNull(),
     clientNeed: text("client_need").notNull(),
+    /** Body-system / subject area, as a second independent filter. */
+    bodySystem: text("body_system"),
     createdAt: timestamp("created_at").notNull().defaultNow(),
   },
   (t) => [

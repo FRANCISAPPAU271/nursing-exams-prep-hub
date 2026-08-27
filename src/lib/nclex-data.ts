@@ -433,3 +433,8 @@ export const NCLEX_DATA: [category: string, condition: string, facts: NclexFact[
     ["a client with a nasogastric tube and an unclear aspirate", "confirm tube position before feeding", "not applicable", "gastric aspirate pH"],
   ]],
 ];
+
+/** Distinct body-system / subject areas covered by the NCLEX dataset. */
+export const NCLEX_BODY_SYSTEMS = Array.from(
+  new Set(NCLEX_DATA.map(([system]) => system)),
+);

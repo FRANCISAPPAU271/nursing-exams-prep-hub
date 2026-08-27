@@ -2,8 +2,8 @@ import "dotenv/config";
 import { db, pool } from "./index";
 import { attempts, lessons, payouts, questions, referrals, tasks, users } from "./schema";
 import { LESSON_SEEDS } from "../lib/library";
-import { NCLEX_DATA } from "../lib/nclex-data";
 import { CLIENT_NEED_DATA } from "../lib/client-need-data";
+import { NCLEX_DATA } from "../lib/nclex-data";
 import { MIDWIFERY_DATA } from "../lib/midwifery-data";
 import { buildReferralCode } from "../lib/referrals";
 import { hashPassword } from "../lib/auth";
@@ -212,6 +212,7 @@ async function main() {
       exam: string,
       cat: { category: string; clientNeed: string },
       d: { stem: string; correct: string; distractors: string[]; rationale: string },
+      bodySystem?: string,
     ) => {
       n++;
       if (seen.has(d.stem)) {
@@ -229,21 +230,74 @@ async function main() {
         category: cat.category,
         difficulty: DIFFICULTIES[n % 3],
         clientNeed: cat.clientNeed,
+        bodySystem: bodySystem ?? null,
       });
     };
 
-    // ── NCLEX, grouped by the four official Client Needs categories ──
+    // ── NCLEX ───────────────────────────────────────────────────────
+    // Every question is generated twice and tagged on two independent axes:
+    //   category   -> one of the four official NCLEX Client Needs
+    //   bodySystem -> the body system / subject area
+    // so students can filter by either system without duplicating content.
+
+    // Map each clinical condition to its body system.
+    const bodyOf = new Map<string, string>();
+    for (const [system, condition] of NCLEX_DATA) bodyOf.set(condition, system);
+
+    // Client Need topics are practice areas rather than diseases, so they are
+    // mapped to the most relevant subject area for filtering purposes.
+    const TOPIC_BODY: Record<string, string> = {
+      "client identification safety": "Fundamentals",
+      "delegation and supervision": "Fundamentals",
+      "safety and fall prevention": "Fundamentals",
+      "infection control practice": "Safety & Infection",
+      "legal and ethical practice": "Fundamentals",
+      "emergency management": "Fundamentals",
+      "antenatal health education": "Maternal & Child",
+      "child growth and development": "Maternal & Child",
+      "chronic disease self-management": "Fundamentals",
+      "preventive screening": "Fundamentals",
+      "lifestyle and nutrition counselling": "Fundamentals",
+      "reproductive and family planning education": "Maternal & Child",
+      "newborn and infant care education": "Maternal & Child",
+      "suicide risk": "Psychosocial",
+      "acute psychosis": "Psychosocial",
+      "anxiety and panic": "Psychosocial",
+      "substance use and withdrawal": "Psychosocial",
+      "grief and loss": "Psychosocial",
+      "mental health in the community": "Psychosocial",
+      "therapeutic communication": "Psychosocial",
+      "recognising deterioration": "Fundamentals",
+      "prioritising multiple clients": "Fundamentals",
+      "interpreting assessment data": "Fundamentals",
+      "evaluating care effectiveness": "Fundamentals",
+      "clinical decision making": "Fundamentals",
+    };
+    const bodyFor = (condition: string) =>
+      bodyOf.get(condition) ?? TOPIC_BODY[condition] ?? "Fundamentals";
+
+    // Client Need tagged set
     for (const [clientNeed, condition, facts] of CLIENT_NEED_DATA) {
       const cat = { category: clientNeed, clientNeed };
+      const body = bodyFor(condition);
       for (const [finding, action, drug, lab] of facts) {
         const t: T = { name: condition, finding, action, drug, lab };
-        // NCLEX Client Need entries are safety / education topics rather than
+        // Client Need entries are safety / education topics rather than
         // diseases, so the wording must not read as "a client with <topic>".
-        // A clinical finding describes something happening TO a person, while a
-        // topic describes a practice area. Distinguish by the opening word.
         const topicLike = CLIENT_NEED_TOPICS.has(condition);
         for (const d of buildDrafts(t, clientNeed, { isMid: false, isGhana: false, topicLike })) {
-          push("NCLEX", cat, d);
+          push("NCLEX", cat, d, body);
+        }
+      }
+    }
+
+    // Body-system tagged set (same clinical facts, different grouping)
+    for (const [system, condition, facts] of NCLEX_DATA) {
+      const cat = { category: system, clientNeed: system };
+      for (const [finding, action, drug, lab] of facts) {
+        const t: T = { name: condition, finding, action, drug, lab };
+        for (const d of buildDrafts(t, system, { isMid: false, isGhana: false })) {
+          push("NCLEX", cat, d, system);
         }
       }
     }

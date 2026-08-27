@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { categoriesFor, DEFAULT_EXAM, getExam } from "@/lib/exams";
+import { NCLEX_BODY_SYSTEMS as BODY_SYSTEMS } from "@/lib/nclex-data";
 import { buildExplanation } from "@/lib/explain";
 import AnswerBreakdown from "@/components/AnswerBreakdown";
 import ExamTabs from "../ExamTabs";
@@ -27,6 +28,7 @@ export default function QuestionsClient() {
   const [page, setPage] = useState(1);
   const [exam, setExam] = useState<string>(DEFAULT_EXAM);
   const [category, setCategory] = useState("");
+  const [bodySystem, setBodySystem] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(true);
@@ -39,6 +41,7 @@ export default function QuestionsClient() {
     setLoading(true);
     const params = new URLSearchParams({ page: String(page), exam });
     if (category) params.set("category", category);
+    if (bodySystem) params.set("bodySystem", bodySystem);
     if (difficulty) params.set("difficulty", difficulty);
     if (q) params.set("q", q);
     const res = await fetch(`/api/questions?${params}`);
@@ -47,7 +50,7 @@ export default function QuestionsClient() {
     setTotal(data.total ?? 0);
     setPages(data.pages ?? 1);
     setLoading(false);
-  }, [page, exam, category, difficulty, q]);
+  }, [page, exam, category, bodySystem, difficulty, q]);
 
   useEffect(() => {
     const t = setTimeout(load, 250);
@@ -74,6 +77,7 @@ export default function QuestionsClient() {
             onChange={(id) => {
               setExam(id);
               setCategory("");
+              setBodySystem("");
               setPage(1);
             }}
           />
@@ -108,7 +112,7 @@ export default function QuestionsClient() {
         </div>
       </header>
 
-      <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-3">
+      <div className="grid gap-3 rounded-2xl border border-slate-200 bg-white p-4 sm:grid-cols-2 lg:grid-cols-4">
         <input
           className={input}
           placeholder="Search question text…"
@@ -126,11 +130,26 @@ export default function QuestionsClient() {
             setCategory(e.target.value);
           }}
         >
-          <option value="">All categories</option>
+          <option value="">All Client Needs</option>
           {categoriesFor(exam).map((c) => (
             <option key={c}>{c}</option>
           ))}
         </select>
+        {exam === "NCLEX" && (
+          <select
+            className={input}
+            value={bodySystem}
+            onChange={(e) => {
+              setPage(1);
+              setBodySystem(e.target.value);
+            }}
+          >
+            <option value="">All body systems</option>
+            {BODY_SYSTEMS.map((c) => (
+              <option key={c}>{c}</option>
+            ))}
+          </select>
+        )}
         <select
           className={input}
           value={difficulty}

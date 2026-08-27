@@ -12,6 +12,7 @@ export async function GET(req: Request) {
   const page = Math.max(1, Number(url.searchParams.get("page") ?? 1));
   const exam = url.searchParams.get("exam") ?? "";
   const category = url.searchParams.get("category") ?? "";
+  const bodySystem = url.searchParams.get("bodySystem") ?? "";
   const difficulty = url.searchParams.get("difficulty") ?? "";
   const q = url.searchParams.get("q")?.trim() ?? "";
   const limit = 10;
@@ -19,6 +20,7 @@ export async function GET(req: Request) {
   const filters: SQL[] = [];
   if (exam) filters.push(eq(questions.exam, exam));
   if (category) filters.push(eq(questions.category, category));
+  if (bodySystem) filters.push(eq(questions.bodySystem, bodySystem));
   if (difficulty) filters.push(eq(questions.difficulty, difficulty));
   if (q) filters.push(ilike(questions.stem, `%${q}%`));
   const where = filters.length ? and(...filters) : undefined;
