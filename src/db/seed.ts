@@ -3,12 +3,42 @@ import { db, pool } from "./index";
 import { attempts, lessons, payouts, questions, referrals, tasks, users } from "./schema";
 import { LESSON_SEEDS } from "../lib/library";
 import { NCLEX_DATA } from "../lib/nclex-data";
+import { CLIENT_NEED_DATA } from "../lib/client-need-data";
 import { MIDWIFERY_DATA } from "../lib/midwifery-data";
 import { buildReferralCode } from "../lib/referrals";
 import { hashPassword } from "../lib/auth";
 import { sql } from "drizzle-orm";
 
 const DIFFICULTIES = ["easy", "medium", "hard"];
+
+/** NCLEX Client Need entries that describe a practice topic, not a disease. */
+const CLIENT_NEED_TOPICS = new Set([
+  "client identification safety",
+  "delegation and supervision",
+  "safety and fall prevention",
+  "infection control practice",
+  "legal and ethical practice",
+  "emergency management",
+  "antenatal health education",
+  "child growth and development",
+  "chronic disease self-management",
+  "preventive screening",
+  "lifestyle and nutrition counselling",
+  "reproductive and family planning education",
+  "newborn and infant care education",
+  "suicide risk",
+  "acute psychosis",
+  "anxiety and panic",
+  "substance use and withdrawal",
+  "grief and loss",
+  "mental health in the community",
+  "therapeutic communication",
+  "recognising deterioration",
+  "prioritising multiple clients",
+  "interpreting assessment data",
+  "evaluating care effectiveness",
+  "clinical decision making",
+]);
 
 function shuffle<T>(arr: T[], seed: number): T[] {
   const a = [...arr];
@@ -31,23 +61,30 @@ type T = { name: string; finding: string; action: string; drug: string; lab: str
 function buildDrafts(
   t: T,
   category: string,
-  opts: { isMid: boolean; isGhana: boolean },
+  opts: { isMid: boolean; isGhana: boolean; topicLike?: boolean },
 ): { stem: string; correct: string; distractors: string[]; rationale: string }[] {
-  const { isMid, isGhana } = opts;
+  const { isMid, isGhana, topicLike } = opts;
   const P = isGhana ? "patient" : "client";
   const Pc = isGhana ? "Patient" : "Client";
   const PROVIDER = isGhana ? "doctor" : "provider";
   const NURSE = isMid ? "midwife" : "nurse";
   const subject = isMid ? "a woman" : `a ${P}`;
-  const scenario = isMid
-    ? `A midwife is caring for a woman with ${t.name}.`
-    : `A ${NURSE} is caring for a ${P} with ${t.name}.`;
+  const scenario = topicLike
+    ? `A ${NURSE} is involved in ${t.name}.`
+    : isMid
+      ? `A midwife is caring for a woman with ${t.name}.`
+      : `A ${NURSE} is caring for a ${P} with ${t.name}.`;
+  const rel = topicLike ? `relating to ${t.name}` : `in ${t.name}`;
   const who = isGhana ? "healthcare assistant" : "nursing assistant";
 
   return [
     {
-      stem: `${scenario} Which finding should be reported to the ${PROVIDER}?`,
-      correct: `${Pc} has ${t.finding}.`,
+      stem: topicLike
+        ? `A ${NURSE} is involved in ${t.name}. Which situation should be reported to the ${PROVIDER}?`
+        : `${scenario} Which finding should be reported to the ${PROVIDER}?`,
+      correct: topicLike
+        ? `A situation where ${t.finding} is present.`
+        : `${Pc} has ${t.finding}.`,
       distractors: [
         `${Pc} reports mild tiredness after walking on the ward.`,
         `${Pc} requests a change to the menu choice.`,
@@ -56,7 +93,9 @@ function buildDrafts(
       rationale: `${cap(t.finding)} is a significant concern in ${t.name} and requires prompt escalation. The other findings are expected, non-urgent, or unrelated to the condition.`,
     },
     {
-      stem: `A ${NURSE} notes ${t.finding} in ${subject}. In relation to ${t.name}, which action should be taken first?`,
+      stem: topicLike
+        ? `A ${NURSE} notes ${t.finding}. In relation to ${t.name}, which action should be taken first?`
+        : `A ${NURSE} notes ${t.finding} in ${subject}. In relation to ${t.name}, which action should be taken first?`,
       correct: `The ${NURSE} should ${t.action}.`,
       distractors: [
         `The ${NURSE} should document the finding and reassess in four hours.`,
@@ -66,8 +105,10 @@ function buildDrafts(
       rationale: `When ${t.finding} occurs in ${t.name}, the priority is to ${t.action}. Delaying intervention allows the problem to deteriorate and worsens ${P} outcomes.`,
     },
     {
-      stem: `${scenario} Which medicine or therapy is most relevant to this ${P}'s care?`,
-      correct: `${cap(t.drug)}.`,
+      stem: topicLike
+        ? `A ${NURSE} is managing a situation ${rel}. Which action is most appropriate for the ${NURSE} to take?`
+        : `${scenario} Which medicine or therapy is most relevant to this ${P}'s care?`,
+      correct: topicLike ? `${cap(t.action)}.` : `${cap(t.drug)}.`,
       distractors: [
         "A medicine with no indication for this condition.",
         "A medicine that is contraindicated in this client.",
@@ -76,7 +117,7 @@ function buildDrafts(
       rationale: `${cap(t.drug)} is the relevant therapy in ${t.name} where ${t.finding} is present. The other options are not indicated, are contraindicated, or address a different problem.`,
     },
     {
-      stem: `A ${NURSE} is reviewing results relating to ${t.name}. Which is most important to monitor?`,
+      stem: `A ${NURSE} is reviewing results ${rel}. Which is most important to monitor?`,
       correct: `The ${t.lab}.`,
       distractors: [
         "A serum amylase taken on admission.",
@@ -86,7 +127,7 @@ function buildDrafts(
       rationale: `The ${t.lab} directly reflects the status of ${t.name} and guides treatment decisions. The other results do not measure this problem.`,
     },
     {
-      stem: `A ${NURSE} is giving information about ${t.name}. Which ${P} statement shows correct understanding?`,
+      stem: `A ${NURSE} is giving information ${rel}. Which ${P} statement shows correct understanding?`,
       correct: `\u201cI will report ${t.finding} straight away.\u201d`,
       distractors: [
         "\u201cI can stop all of my medicines once I feel better.\u201d",
@@ -96,7 +137,7 @@ function buildDrafts(
       rationale: `Recognising and reporting ${t.finding} promotes early intervention in ${t.name}. The other statements describe unsafe self-management and need further teaching.`,
     },
     {
-      stem: `A ${NURSE} is planning care in relation to ${t.name}. Which intervention should be included?`,
+      stem: `A ${NURSE} is planning care ${rel}. Which intervention should be included?`,
       correct: `${cap(t.action)}.`,
       distractors: [
         `Limit the ${P}'s fluid intake to 500 mL daily without a prescription.`,
@@ -106,7 +147,7 @@ function buildDrafts(
       rationale: `Evidence-based care for ${t.name} includes the action to ${t.action}. The other options are inappropriate, unsafe, or require a specific prescription.`,
     },
     {
-      stem: `A ${NURSE} is prioritising care on the ward. Which ${P} should be assessed first? (${t.name})`,
+      stem: `A ${NURSE} is prioritising care on the ward in a situation ${rel}. Which ${P} should be assessed first?`,
       correct: `The ${P} with ${t.finding}.`,
       distractors: [
         `The ${P} awaiting discharge information in two hours.`,
@@ -116,7 +157,7 @@ function buildDrafts(
       rationale: `The ${P} with ${t.finding} shows a change in condition and takes priority using the ABC and acute-versus-chronic frameworks.`,
     },
     {
-      stem: `A ${NURSE} is evaluating care relating to ${t.name}. Which outcome shows the plan is working?`,
+      stem: `A ${NURSE} is evaluating care ${rel}. Which outcome shows the plan is working?`,
       correct: `The ${t.lab} trends towards the expected reference range.`,
       distractors: [
         `The ${P} sleeps more than fourteen hours per day.`,
@@ -127,7 +168,7 @@ function buildDrafts(
     },
     {
       stem: `In ${category.toLowerCase()}, which record entry about ${t.name} is most appropriate?`,
-      correct: `\u201c${Pc} has ${t.finding}; ${NURSE} acted to ${t.action}; ${PROVIDER} informed.\u201d`,
+      correct: `\u201c${topicLike ? `${cap(t.finding)} observed` : `${Pc} has ${t.finding}`}; ${NURSE} acted to ${t.action}; ${PROVIDER} informed.\u201d`,
       distractors: [
         `\u201c${Pc} appears to be doing poorly today.\u201d`,
         `\u201c${Pc} seems anxious and probably needs sedation.\u201d`,
@@ -191,12 +232,17 @@ async function main() {
       });
     };
 
-    // ── NCLEX ───────────────────────────────────────────────────────
-    for (const [category, condition, facts] of NCLEX_DATA) {
-      const cat = { category, clientNeed: "Clinical Practice" };
+    // ── NCLEX, grouped by the four official Client Needs categories ──
+    for (const [clientNeed, condition, facts] of CLIENT_NEED_DATA) {
+      const cat = { category: clientNeed, clientNeed };
       for (const [finding, action, drug, lab] of facts) {
         const t: T = { name: condition, finding, action, drug, lab };
-        for (const d of buildDrafts(t, category, { isMid: false, isGhana: false })) {
+        // NCLEX Client Need entries are safety / education topics rather than
+        // diseases, so the wording must not read as "a client with <topic>".
+        // A clinical finding describes something happening TO a person, while a
+        // topic describes a practice area. Distinguish by the opening word.
+        const topicLike = CLIENT_NEED_TOPICS.has(condition);
+        for (const d of buildDrafts(t, clientNeed, { isMid: false, isGhana: false, topicLike })) {
           push("NCLEX", cat, d);
         }
       }
