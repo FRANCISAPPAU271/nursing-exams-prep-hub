@@ -16,7 +16,7 @@ const FEATURES = [
   {
     icon: "❓",
     title: "1,000+ practice questions",
-    body: "1,000+ NCLEX, Ghana NMC and Midwifery items — every one unique, tagged by category and difficulty, with a written rationale.",
+    body: "1,000+ NCLEX and Midwifery items — every one unique, tagged by category and difficulty, with a written rationale.",
   },
   {
     icon: "☑",
@@ -31,7 +31,7 @@ const FEATURES = [
   {
     icon: "🎬",
     title: "Video learning library",
-    body: "57 lessons across body systems, conditions, care planning, plus dedicated Ghana NMC licensing and Midwifery tracks.",
+    body: "47 lessons across body systems, clinical conditions, care planning and a dedicated Midwifery track.",
   },
   {
     icon: "📈",
@@ -114,7 +114,7 @@ export default async function Home() {
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
                 One study platform for both routes to registration — the UK <strong>NMC CBT and
-                Licensing Exam</strong>, the <strong>Midwifery Licensing Exam</strong> and the US/Canada{" "}
+                Exam</strong> and the US/Canada{" "}
                 <strong>NCLEX</strong>. Plan your revision, drill a
                 huge question bank, watch focused lessons and track your readiness.
               </p>
@@ -278,7 +278,6 @@ export default async function Home() {
                 ["🫀", "Body Systems", "12 lessons", "Cardiovascular, respiratory, renal, neuro and more."],
                 ["🩺", "Common Conditions", "15 lessons", "Heart failure, DKA, sepsis, stroke, preeclampsia."],
                 ["📋", "Care Plans & Process", "8 lessons", "ADPIE, NANDA diagnoses, SMART goals, SBAR."],
-                ["🇬🇭", "Ghana NMC Licensing", "10 lessons", "Ghana Health System, CHPS, STG, malaria and the partograph."],
                 ["👶", "Midwifery Practice", "10 lessons", "Antenatal, labour, obstetric emergencies and newborn care."],
               ].map(([icon, title, count, body]) => (
                 <div key={title} className="rounded-2xl border border-slate-200 bg-white p-5">

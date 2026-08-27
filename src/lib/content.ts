@@ -17,17 +17,17 @@ export const FAQS: { q: string; a: string; group: string }[] = [
   {
     group: "Question bank",
     q: "How many questions are included?",
-    a: "Over 1,000 in total and growing — 799 NCLEX items across 11 categories and 249 Midwifery items, every one unique and written with a full rationale. We deliberately do not pad the bank with repeated questions."
+    a: "Over 1,000 in total — 799 NCLEX items across 11 categories and 249 Midwifery items, every one unique with a full rationale. We deliberately do not pad the bank with repeated questions."
   },
   {
     group: "Exams covered",
     q: "Which exams does the platform prepare me for?",
-    a: "Three tracks. The Ghana NMC track prepares you for the Nursing and Midwifery Council of Ghana licensing exam for Registered General Nursing, using Ghana clinical practice, the Ghana Health System, CHPS and the national Standard Treatment Guidelines. The Midwifery track is a separate, dedicated bank. The NCLEX track covers NCLEX-RN and NCLEX-PN for the United States and Canada. Switch with one tap — questions, categories, mock format and lessons all follow you.",
+    a: "Two tracks. The Midwifery track prepares you for the Nursing and Midwifery Council of Ghana midwifery licensing exam, covering antenatal care, labour, obstetric emergencies, the puerperium, newborn care, family planning and women's health. The NCLEX track covers NCLEX-RN and NCLEX-PN for the United States and Canada. Switch with one tap — questions, categories, mock format and lessons all follow you.",
   },
   {
     group: "Exams covered",
     q: "Do the mock exams match the real formats?",
-    a: "Yes. The NCLEX mock runs 75 questions in 90 minutes. The Ghana NMC and Midwifery mocks run 100 questions in 2 hours. All use 1 minute per question pacing to build real exam stamina."
+    a: "Yes. The NCLEX mock runs 75 questions in 90 minutes. The Midwifery mock runs 100 questions in 2 hours. Both use 1 minute per question pacing to build real exam stamina."
   },
   {
     group: "Exams covered",

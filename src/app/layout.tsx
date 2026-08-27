@@ -8,10 +8,9 @@ export const metadata: Metadata = {
     template: "%s · All Nursing Exams Prep Hub",
   },
   description:
-    "Prepare for the Ghana NMC licensing exams, the Midwifery licensing exam, or the US NCLEX in one place: 1,000+ practice questions with rationales, a study task manager, adaptive CAT tests, exam-accurate mock tests, care plans and video lessons.",
+    "Prepare for the Midwifery licensing exam or the US NCLEX in one place: 1,000+ practice questions with rationales, a study task manager, adaptive CAT tests, exam-accurate mock tests, care plans and video lessons.",
   keywords: [
     "NMC CBT",
-    "Ghana NMC",
     "Midwifery",
     "Test of Competence",
     "NCLEX",
@@ -25,7 +24,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "NMC exams and NCLEX with a plan, not panic",
     description:
-      "1,000+ Ghana NMC, Midwifery and NCLEX practice questions with rationales, study task manager, exam-accurate mock tests and a video learning library.",
+      "1,000+ Midwifery and NCLEX practice questions with rationales, study task manager, exam-accurate mock tests and a video learning library.",
     type: "website",
   },
 };

@@ -14,7 +14,6 @@ export const LIBRARY_SECTIONS = [
   "Body Systems",
   "Common Conditions",
   "Care Plans & Nursing Process",
-  "Ghana NMC Licensing",
   "Midwifery Practice",
 ];
 
@@ -62,19 +61,6 @@ const carePlans: [string, string, number][] = [
   ["Delegation & Scope of Practice", "RN vs LPN vs UAP — what can safely be delegated.", 14],
 ];
 
-const ghanaNmcLessons: [string, string, number][] = [
-  ["Ghana NMC Licensing Exam: Format & How to Prepare", "What the NMC Ghana licensing exam covers, how the papers are structured and how to plan your revision.", 14],
-  ["The Ghana Health System & CHPS Explained", "Levels of care from CHPS compound to teaching hospital, referrals and the role of the community health nurse.", 17],
-  ["Ghana Standard Treatment Guidelines in Practice", "Using the Essential Medicines List and STG to check prescriptions and give safe medicines.", 16],
-  ["Malaria: Ghana Treatment Guidelines", "Uncomplicated and severe malaria, ACTs, injectable artesunate and nursing care.", 19],
-  ["The Partograph: Detecting Complications Early", "Plotting labour progress, the alert and action lines, and when to refer.", 21],
-  ["Emergency Obstetric Care: Recognise & Refer", "Postpartum haemorrhage, pre-eclampsia, obstructed labour and the referral chain.", 20],
-  ["Sickle Cell Disease Nursing Care in Ghana", "Crisis triggers, hydration, analgesia, infection and client education.", 18],
-  ["Severe Acute Malnutrition & IMCI", "MUAC classification, F-75 and F-100 feeding, and the IMCI danger signs.", 22],
-  ["Infection Prevention in Resource-Limited Settings", "Hand hygiene with limited water, PPE, sharps safety and waste management.", 15],
-  ["Professional Conduct & the NMC Ghana Code", "Accountability, confidentiality, consent, documentation and reporting poor practice.", 16],
-];
-
 const midwiferyLessons: [string, string, number][] = [
   ["Antenatal Care: The Complete Visit", "History, examination, danger signs, tetanus immunisation, iron and malaria prophylaxis.", 20],
   ["Normal Labour: The Stages Explained", "First to fourth stage, the partograph, fetal monitoring and supportive care.", 22],
@@ -101,7 +87,7 @@ export const TOPIC_VIDEO_MAP: Record<string, TopicVideoInfo> = {
     channel: "RegisteredNurseRN (Pass NCLEX First Try & Exam Orientation)",
     keyPoints: [
       "Use the Study Task Manager to schedule daily 50-question review blocks.",
-      "Switch between NCLEX, Ghana NMC and Midwifery tabs depending on your target exam.",
+      "Switch between the NCLEX and Midwifery tabs depending on your target exam.",
       "Review the rationale for every option — right and wrong — to build clinical judgement.",
       "Complete at least three full-length timed mock exams before your test date.",
     ],
@@ -468,16 +454,6 @@ export const LESSON_SEEDS: LessonSeed[] = [
     searchQuery: `${title} nursing students tutorial`,
     premium: i > 0,
   })),
-  ...ghanaNmcLessons.map(([title, description, durationMin], i) => ({
-    exam: "GHANA_NMC",
-    title,
-    description,
-    section: "Ghana NMC Licensing",
-    topic: title,
-    durationMin,
-    searchQuery: `${title} Ghana NMC licensing exam nursing`,
-    premium: i > 1,
-  })),
   ...midwiferyLessons.map(([title, description, durationMin], i) => ({
     exam: "MIDWIFERY",
     title,
@@ -485,7 +461,7 @@ export const LESSON_SEEDS: LessonSeed[] = [
     section: "Midwifery Practice",
     topic: title,
     durationMin,
-    searchQuery: `${title} midwifery Ghana NMC labour delivery`,
+    searchQuery: `${title} midwifery labour delivery`,
     premium: i > 1,
   })),
 ];

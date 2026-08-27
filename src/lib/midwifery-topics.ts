@@ -1,4 +1,4 @@
-/** Topic seeds for the Ghana NMC Licensing Examination in Midwifery. */
+/** Topic seeds for the Midwifery licensing examination question bank. */
 export type MidwiferyTopic = {
   name: string;
   finding: string;

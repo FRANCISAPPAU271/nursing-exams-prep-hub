@@ -1,5 +1,5 @@
 /**
- * Compact Midwifery clinical dataset (Ghana NMC Midwifery licensing exam).
+ * Compact Midwifery clinical dataset (Midwifery licensing exam).
  * Format: [category, condition, [ [finding, priorityAction, keyDrug, keyLab], ... ]]
  */
 export type MidFact = [finding: string, action: string, drug: string, lab: string];

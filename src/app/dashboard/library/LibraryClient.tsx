@@ -55,14 +55,14 @@ const TOUR_CHAPTERS = [
     icon: "❓",
     title: "1,000+ Questions Bank & Rationales",
     badge: "Question Bank",
-    summary: "Comprehensive item bank covering NCLEX, Ghana NMC and Midwifery — every question unique.",
+    summary: "Comprehensive item bank covering the NCLEX and Midwifery tracks — every question unique.",
     visual: {
       stat1: "🇺🇸 NCLEX",
-      stat2: "🇬🇭 24,000 Ghana NMC",
+      stat2: "👶 Midwifery",
       stat3: "Detailed Rationales",
     },
     tips: [
-      "Use the Exam Switcher tabs at the top to toggle NCLEX, Ghana NMC and Midwifery.",
+      "Use the Exam Switcher tabs at the top to toggle NCLEX and Midwifery.",
       "Filter by category: Pharmacology, Med-Surg, The NMC Code, Numeracy & Calculations, etc.",
       "Click 'Show answer & rationale' on any question to understand why right and wrong answers differ.",
     ],
@@ -81,7 +81,7 @@ const TOUR_CHAPTERS = [
     tips: [
       "Budget: 1 minute per question — 75 items = 75 minutes.",
       "NCLEX Mock: 75 questions in 90 minutes with question navigator.",
-      "Ghana NMC & Midwifery Mocks: 100 questions in 2 hours each.",
+      "Midwifery Mock: 100 questions in 2 hours.",
       "Flag difficult questions to review before submitting, then study every rationale.",
     ],
   },
@@ -128,7 +128,7 @@ const STUDY_PLAN_WEEKS = [
     title: "Fundamentals, Safety & Infection Control",
     target: "100 questions / day + ADPIE review",
     focus: "Standard, contact, droplet, and airborne precautions; sterile technique, vital signs, ethics and delegation.",
-    examTip: "Always assess before intervening. For Ghana NMC, know the IMCI danger signs and the Sepsis Six."
+    examTip: "Always assess before intervening. Know the paediatric danger signs and the sepsis six."
   },
   {
     week: 2,
@@ -220,7 +220,7 @@ export default function LibraryClient({
         <div>
           <h1 className="text-2xl font-bold">Learning Library</h1>
           <p className="text-sm text-slate-500">
-            {lessons.length} video lectures, interactive study tours & clinical guides — body systems, common conditions, care plans, Ghana NMC licensing and Midwifery practice.
+            {lessons.length} video lectures, interactive study tours & clinical guides — body systems, common conditions, care planning and Midwifery practice.
           </p>
         </div>
         {!isPremium && (
