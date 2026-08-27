@@ -1,0 +1,273 @@
+/**
+ * Past NMC examination questions - Surgical Nursing paper (part 1).
+ * Answers derived from the rationales in the paper. Flagged for review.
+ */
+
+import type { PastQuestion } from "./past-paper-medical";
+
+export const PAST_PAPER_SURGICAL_1: PastQuestion[] = [
+  {
+    stem: "A 10 year old child has undergone surgery and has been received into the ward with severe pains. Immediate post-operative pain relief medication would be effective?",
+    options: [
+      "Demerol",
+      "Morphine",
+      "Paracetamol. Rationale: It is a potent opioid analgesic effective in treating severe pain in post-operative patients",
+    ],
+    correctIndex: 0 % 3,
+    rationale: "Demerol (pethidine) is a potent opioid analgesic that is effective in treating severe pain in post-operative clients.",
+    category: "Fundamentals of Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 12-year old admitted with diagnosis of tonsillitis. Which manifestation indicates a systemic response of the inflammatory process?",
+    options: [
+      "Dysphagia",
+      "Fever",
+      "Weakness. Rationale: Fever is a physiological response triggered by the release of cytokines which initiate an inflammatory process, a sign of the body immune system fighting an infection",
+    ],
+    correctIndex: 1 % 3,
+    rationale: "Fever is a physiological response triggered by the release of cytokines which initiate an inflammatory process, a sign of the body's immune system fighting an infection.",
+    category: "Infection Prevention",
+    verified: false,
+  },
+  {
+    stem: "A 19-year-old female complains of fluctuating left subareolar breast mass noticed months after giving birth. Ultrasound-guided aspiration reveals echogenic cystic structure with milk-like fluid and fat globules. Best step in management?",
+    options: [
+      "Excisional biopsy with wide margins",
+      "Initiate short course of bromocriptine",
+      "Follow-up ultrasound to ensure cyst has not recurred. Rationale: This will ensure the cyst has resolved and has not recurred",
+    ],
+    correctIndex: 2 % 3,
+    rationale: "Follow-up ultrasound will ensure the cyst has resolved on its own and has not recurred. Excisional biopsy is not indicated as aspiration did not reveal malignancy, and bromocriptine is not indicated without evidence of a hormone-related disorder.",
+    category: "Fundamentals of Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 19-year-old female who bites her nails presents with pain related to a hangnail. Painful fluctuant area with erythema at the proximal nail bed. Full painless range of motion. Diagnosis?",
+    options: [
+      "Herpetic whitlow",
+      "Onychomycosis",
+      "Paronychia. Rationale: Paronychia is a common infection of the nail fold that presents as a painful red swollen tender area around the nail",
+    ],
+    correctIndex: 2 % 3,
+    rationale: "Paronychia is a common infection of the nail fold that presents as a painful, red, swollen and tender area around the nail, which may contain pus and in severe cases may lead to abscess formation.",
+    category: "Fundamentals of Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 20-year-old dispatch rider rushed to emergency with difficulty in breathing, restlessness, chest pain, lacerations on the face and a lost tooth. Diagnosed with pneumothorax. Which position would ensure improvement in respiration rate?",
+    options: [
+      "Fowler's",
+      "Supine",
+      "Prone. Rationale: Fowler's position helps improve respiration by expanding the chest and reducing pressure on the diaphragm",
+    ],
+    correctIndex: 0 % 3,
+    rationale: "Fowler's position helps improve respiration by expanding the chest and reducing pressure on the diaphragm in a client with pneumothorax.",
+    category: "Respiratory Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 23 year old admitted with suspected appendicitis. Pain around the umbilicus extending to the lower abdomen. Which is NOT a clinical manifestation of appendicitis?",
+    options: [
+      "Abdominal rebound tenderness",
+      "Abdominal flaccidity",
+      "Umbilical pain extending to right lower quadrant. Rationale: Inflamed appendix causes abdominal rigidity, not flaccidity",
+    ],
+    correctIndex: 1 % 3,
+    rationale: "An inflamed appendix causes abdominal rigidity, not flaccidity. Rebound tenderness and umbilical pain extending to the right lower quadrant are clinical manifestations of appendicitis.",
+    category: "Gastrointestinal Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 25-year-old man undergoes three quadrant excisional haemorrhoidectomy. Later that evening he develops suprapubic discomfort and inability to urinate. Which contributed MOST to this complication?",
+    options: [
+      "Prolonged duration of haemorrhoid symptoms",
+      "Performing three quadrant haemorrhoidectomy instead of two",
+      "Limiting intravenous fluids in the postoperative recovery period. Rationale: This may have caused compression of the pudendal nerve which plays a role in external urethral sphincter, leading to urinary retention",
+    ],
+    correctIndex: 2 % 3,
+    rationale: "Limiting intravenous fluids in the postoperative recovery period may have caused compression of the pudendal nerve, which plays a role in external urethral sphincter function, leading to urinary retention and suprapubic discomfort.",
+    category: "Gastrointestinal Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 25-year-old university student reports a small painless lump in her left breast. Worried it might be cancer. MOST likely cause of breast lump is",
+    options: [
+      "Fibroadenoma",
+      "Breast abscess",
+      "Fibrocystic complex. Rationale: Fibroadenomas are the most common type of benign breast tumour and are frequently seen in young women",
+    ],
+    correctIndex: 0 % 3,
+    rationale: "Fibroadenomas are the most common type of benign breast tumour and are frequently seen in young women. Breast abscess and fibrocystic complex are less likely causes of a painless breast lump in a young woman.",
+    category: "Fundamentals of Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 29-year-old teacher with diabetes mellitus reported with a necrosed wound on the right limb. Below knee amputation was done. She felt the limb was still present. Which post-operative nursing diagnosis? I. Disturbed body image related to amputation II. Impaired physical mobility related to amputation III. Ineffective airway clearance",
+    options: [
+      "II and III",
+      "I and II",
+      "I and III. Rationale: Option III is not relevant to the amputation",
+    ],
+    correctIndex: 1 % 3,
+    rationale: "Disturbed body image related to amputation and impaired physical mobility related to amputation are both appropriate nursing diagnoses. Ineffective airway clearance is not relevant to the client's situation.",
+    category: "Fundamentals of Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 30-year-old female diagnosed with Hashimoto's thyroiditis. Which characterizes this disorder?",
+    options: [
+      "Increased basal metabolic rate",
+      "Autoantibodies against TSH receptors",
+      "Increased production of T4. Rationale: Hashimoto's thyroiditis is an autoimmune disorder in which the body produces antibodies against its own thyroid gland, leading to inflammation and decreased production of thyroid hormones",
+    ],
+    correctIndex: 1 % 3,
+    rationale: "Hashimoto's thyroiditis is an autoimmune disorder in which the body produces antibodies against its own thyroid gland, leading to inflammation and damage resulting in decreased production of thyroid hormones.",
+    category: "Endocrine Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 30-year-old female undergoes CT scan and found to have a 2cm cystic mass in the presacral space. Otherwise healthy, no family history. MRI confirms a cystic lesion without invasion. What do you recommend next?",
+    options: [
+      "Stool softeners, fibre",
+      "Observation",
+      "Flexible sigmoidoscopy. Rationale: The patient is asymptomatic, the mass can be secured manually, and MRI confirms a cystic lesion without invasion. Therefore observation is the most appropriate next step",
+    ],
+    correctIndex: 1 % 3,
+    rationale: "The client is asymptomatic, the mass can be secured manually and MRI confirms a cystic lesion without invasion. Therefore observation is the most appropriate next step.",
+    category: "Gastrointestinal Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 30-year-old male complains of diffuse back pain without radicularity, worse in the morning. Uses diuretics for hypertension. Radiographic studies reveal the following finding?",
+    options: [
+      "Ankylosing spondylitis",
+      "Herniated disc",
+      "Rheumatoid arthritis. Rationale: The bamboo appearance of the spine on radiographic studies is a classic finding of ankylosing spondylitis",
+    ],
+    correctIndex: 0 % 3,
+    rationale: "The bamboo appearance of the spine on radiographic studies is a classic finding of ankylosing spondylitis, a chronic inflammatory disease that affects the spine and sacroiliac joints.",
+    category: "Neurological Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 30-year-old developer reported with blurred vision as a result of splash of pepper in the right eye. Diagnosis of glaucoma made. Which are possible nursing diagnoses? I. Risk for injury related to visual acuity deficits II. Deficient fluid volume related to visual acuity deficits III. Self-care deficits related to visual acuity deficits",
+    options: [
+      "II and III",
+      "I and II",
+      "I and III. Rationale: I and III can increase the risk of injury in activities of daily living. II does not directly affect fluid volume",
+    ],
+    correctIndex: 1 % 3,
+    rationale: "Risk for injury and self-care deficits can increase the risk of injury in activities of daily living. Deficient fluid volume does not directly affect fluid volume in the context of visual acuity deficits.",
+    category: "Fundamentals of Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 32-year-old woman admitted for knee surgery. Which data from pre-operative assessment should be reported to the surgeon before surgery?",
+    options: [
+      "Lack of knowledge of the procedure",
+      "History of postoperative infection following a caesarean section",
+      "Statement that her last menstrual period was 8 weeks ago. Rationale: This could indicate a risk for surgical site infection during the knee surgery",
+    ],
+    correctIndex: 1 % 3,
+    rationale: "A history of postoperative infection following a caesarean section could indicate a risk for surgical site infection during the knee surgery. The surgeon may want to take additional precautions or prescribe prophylactic antibiotics.",
+    category: "Fundamentals of Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 33-year-old accountant trapped under debris after a building fire. Sustained second degree burns with spinal injury. Greatest threat to a patient with a major burn?",
+    options: [
+      "Wound infection",
+      "Disturbed body image",
+      "Hypovolaemic shock. Rationale: Hypovolaemic shock can lead to decreased blood flow to vital organs resulting in organ failure and death",
+    ],
+    correctIndex: 2 % 3,
+    rationale: "Hypovolaemic shock can lead to decreased blood flow to vital organs and tissues, resulting in organ failure and death. It is the greatest threat to a client with a major burn.",
+    category: "Fundamentals of Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 35-year-old male with ileocaecal Crohn's disease controlled with sulfasalazine presents with one week of severe pain and bright red bleeding after bowel movement, improving with sitz baths. Small superficial tear in the anoderm in the posterior midline. How do you proceed?",
+    options: [
+      "Lateral internal sphincterotomy",
+      "Examination under anaesthesia, biopsy",
+      "Fibre supplementation, sitz baths. Rationale: Symptoms and physical exam findings are consistent with an acute anal fissure. Treatment options include stool softeners, increased fibre intake, sitz baths and topical analgesics",
+    ],
+    correctIndex: 2 % 3,
+    rationale: "Symptoms and physical examination findings are consistent with an acute anal fissure. Treatment options include stool softeners, increased fibre intake, sitz baths and topical analgesics.",
+    category: "Gastrointestinal Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 36 weeks pregnant mother reported with contractions. The term contraction of the uterus means",
+    options: [
+      "Abdominal pain felt at term",
+      "Temporary shortening and thickening of muscle fibres",
+      "Permanent partial shortening of muscle fibres. Rationale: This occurs due to the coordinated contraction of uterine smooth muscle cells initiated by the release of oxytocin",
+    ],
+    correctIndex: 1 % 3,
+    rationale: "Uterine contraction occurs due to the coordinated contraction of uterine smooth muscle cells, initiated by the release of oxytocin, and leads to temporary shortening and thickening of muscle fibres.",
+    category: "Maternal & Child Health",
+    verified: false,
+  },
+  {
+    stem: "A 36-year-old mother is to undergo hysterectomy as a result of bleeding fibroids. The main focus of psychological preparation is?",
+    options: [
+      "Knowing the culture of the patient",
+      "Knowing what the patient knows about the operation",
+      "Knowing the supporting system of the patient. Rationale: Patients may feel more confident when they have a clear understanding of who will be there for them before, during and after surgery",
+    ],
+    correctIndex: 2 % 3,
+    rationale: "Clients may feel more confident and supported when they have a clear understanding of who will be there for them before, during and after the surgery.",
+    category: "Maternal & Child Health",
+    verified: false,
+  },
+  {
+    stem: "A 37-year-old driver involved in a road traffic accident diagnosed with head injury with raised intracranial pressure and decreased level of consciousness. Nursing interventions to achieve patent airway? I. Keep patient lying on the side II. Elevate the bed to 30 degrees III. Suction less frequently and should last less than 10 seconds IV. Insert nasogastric tube",
+    options: [
+      "I, II, III and IV",
+      "II, III and IV",
+      "I, II and III. Rationale: Keeping the patient lying on their side can increase pressure on the affected side of the brain",
+    ],
+    correctIndex: 0 % 3,
+    rationale: "Keeping a client with raised intracranial pressure lying on their side can increase pressure on the affected side of the brain, leading to further damage and compromising neurological status. The other measures are appropriate.",
+    category: "Neurological Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 37-year-old exporter reported with blurred vision from splash of pepper in the right eye. Diagnosis of glaucoma made. Post-operative teaching should include avoiding? I. Driving for long distances II. Lifting heavy objects III. Bending",
+    options: [
+      "II and III",
+      "I and III",
+      "I and II. Rationale: These two activities significantly increase intraocular pressure and put stress on the eye",
+    ],
+    correctIndex: 0 % 3,
+    rationale: "Driving for long distances and lifting heavy objects both significantly increase intraocular pressure and put stress on the eye, which can interfere with the healing process and increase the risk of complications.",
+    category: "Fundamentals of Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 37-year-old female presents with nipple discharge that is often awakening in the morning, intermixed with a brown and clear substance without frank blood. Ultrasound reveals a dilated duct in the left breast. Mammogram reveals a small focus of calcification within the duct. Next best step in management?",
+    options: [
+      "Punch biopsy of the skin",
+      "Aspiration then send fluid for gram stain and culture",
+      "Single duct excision. Rationale: Single duct excision is the gold standard for the diagnosis and treatment of intraductal papillomas which can present with nipple discharge and findings like a dilated duct and calcifications",
+    ],
+    correctIndex: 2 % 3,
+    rationale: "Single duct excision is the gold standard for the diagnosis and treatment of intraductal papillomas, which can present with nipple discharge and findings like a dilated duct and calcifications.",
+    category: "Fundamentals of Nursing",
+    verified: false,
+  },
+  {
+    stem: "A 38-year-old mechanic diagnosed with urethral stricture. Develop a nursing care plan including all the following EXCEPT?",
+    options: [
+      "Oliguria",
+      "Restrict calcium intake",
+      "Keep patient in a supine position. Rationale: Lying flat on the back can worsen the condition by putting pressure on the urethra",
+    ],
+    correctIndex: 2 % 3,
+    rationale: "Lying flat on the back (supine) can worsen urethral stricture by putting pressure on the urethra and causing further obstruction of urine flow. Oliguria and restricting calcium are appropriate to include.",
+    category: "Renal Nursing",
+    verified: false,
+  },
+];

@@ -6,6 +6,7 @@ import { NURSING_DATA } from "../lib/nursing-data";
 import { PAST_PAPER_MEDICAL } from "../lib/past-paper-medical";
 import { PAST_PAPER_MEDICAL_2 } from "../lib/past-paper-medical-2";
 import { PAST_PAPER_MEDICAL_3 } from "../lib/past-paper-medical-3";
+import { PAST_PAPER_SURGICAL_1 } from "../lib/past-paper-surgical-1";
 import { buildReferralCode } from "../lib/referrals";
 import { hashPassword } from "../lib/auth";
 import { sql } from "drizzle-orm";
@@ -258,7 +259,7 @@ async function main() {
     // Real questions transcribed from a past paper supplied by the operator.
     // Answers are derived from the rationales printed in the paper, not from
     // an official answer key, so they are flagged for review.
-    for (const q of [...PAST_PAPER_MEDICAL, ...PAST_PAPER_MEDICAL_2, ...PAST_PAPER_MEDICAL_3]) {
+    for (const q of [...PAST_PAPER_MEDICAL, ...PAST_PAPER_MEDICAL_2, ...PAST_PAPER_MEDICAL_3, ...PAST_PAPER_SURGICAL_1]) {
       n++;
       const key = `PAST::${q.stem}`;
       if (seen.has(key)) {
