@@ -13,6 +13,7 @@ export async function GET(req: Request) {
   const exam = url.searchParams.get("exam") ?? "";
   const category = url.searchParams.get("category") ?? "";
   const bodySystem = url.searchParams.get("bodySystem") ?? "";
+  const source = url.searchParams.get("source") ?? "";
   const difficulty = url.searchParams.get("difficulty") ?? "";
   const q = url.searchParams.get("q")?.trim() ?? "";
   const limit = 10;
@@ -21,6 +22,8 @@ export async function GET(req: Request) {
   if (exam) filters.push(eq(questions.exam, exam));
   if (category) filters.push(eq(questions.category, category));
   if (bodySystem) filters.push(eq(questions.bodySystem, bodySystem));
+  if (source === "past") filters.push(eq(questions.clientNeed, "Past Examination Questions"));
+  if (source === "bank") filters.push(sql`${questions.clientNeed} <> 'Past Examination Questions'`);
   if (difficulty) filters.push(eq(questions.difficulty, difficulty));
   if (q) filters.push(ilike(questions.stem, `%${q}%`));
   const where = filters.length ? and(...filters) : undefined;

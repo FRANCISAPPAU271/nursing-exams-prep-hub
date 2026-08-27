@@ -28,6 +28,7 @@ export default function QuestionsClient() {
   const [exam, setExam] = useState<string>(DEFAULT_EXAM);
   const [category, setCategory] = useState("");
   const [bodySystem, setBodySystem] = useState("");
+  const [source, setSource] = useState("");
   const [difficulty, setDifficulty] = useState("");
   const [q, setQ] = useState("");
   const [loading, setLoading] = useState(true);
@@ -41,6 +42,7 @@ export default function QuestionsClient() {
     const params = new URLSearchParams({ page: String(page), exam });
     if (category) params.set("category", category);
     if (bodySystem) params.set("bodySystem", bodySystem);
+    if (source) params.set("source", source);
     if (difficulty) params.set("difficulty", difficulty);
     if (q) params.set("q", q);
     const res = await fetch(`/api/questions?${params}`);
@@ -49,7 +51,7 @@ export default function QuestionsClient() {
     setTotal(data.total ?? 0);
     setPages(data.pages ?? 1);
     setLoading(false);
-  }, [page, exam, category, bodySystem, difficulty, q]);
+  }, [page, exam, category, bodySystem, source, difficulty, q]);
 
   useEffect(() => {
     const t = setTimeout(load, 250);
@@ -77,6 +79,7 @@ export default function QuestionsClient() {
               setExam(id);
               setCategory("");
               setBodySystem("");
+              setSource("");
               setPage(1);
             }}
           />
@@ -133,6 +136,18 @@ export default function QuestionsClient() {
           {categoriesFor(exam).map((c) => (
             <option key={c}>{c}</option>
           ))}
+        </select>
+        <select
+          className={input}
+          value={source}
+          onChange={(e) => {
+            setPage(1);
+            setSource(e.target.value);
+          }}
+        >
+          <option value="">All question sources</option>
+          <option value="bank">Standard question bank</option>
+          <option value="past">Past examination questions</option>
         </select>
 
         <select

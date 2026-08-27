@@ -3,6 +3,7 @@ import { db, pool } from "./index";
 import { attempts, lessons, payouts, questions, referrals, tasks, users } from "./schema";
 import { LESSON_SEEDS } from "../lib/library";
 import { NURSING_DATA } from "../lib/nursing-data";
+import { PAST_PAPER_MEDICAL } from "../lib/past-paper-medical";
 import { buildReferralCode } from "../lib/referrals";
 import { hashPassword } from "../lib/auth";
 import { sql } from "drizzle-orm";
@@ -249,6 +250,32 @@ async function main() {
           push("ALL_NURSES", cat, d);
         }
       }
+    }
+
+    // ── Past NMC examination questions (Medical Nursing paper) ─────
+    // Real questions transcribed from a past paper supplied by the operator.
+    // Answers are derived from the rationales printed in the paper, not from
+    // an official answer key, so they are flagged for review.
+    for (const q of PAST_PAPER_MEDICAL) {
+      n++;
+      const key = `PAST::${q.stem}`;
+      if (seen.has(key)) {
+        skipped++;
+        continue;
+      }
+      seen.add(key);
+      const opts = shuffle(q.options, n * 13);
+      rows.push({
+        exam: "ALL_NURSES",
+        stem: q.stem,
+        options: opts,
+        correctIndex: opts.indexOf(q.options[q.correctIndex]),
+        rationale: q.rationale,
+        category: q.category,
+        difficulty: "medium",
+        clientNeed: "Past Examination Questions",
+        bodySystem: null,
+      });
     }
 
     for (let i = 0; i < rows.length; i += 1000) {
