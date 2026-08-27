@@ -15,7 +15,7 @@ export const dynamic = "force-dynamic";
 const FEATURES = [
   {
     icon: "❓",
-    title: "32,000 practice questions",
+    title: "44,000 practice questions",
     body: "20,000 NCLEX items plus 12,000 NMC CBT items — every one tagged by category and difficulty with a written rationale.",
   },
   {
@@ -31,7 +31,7 @@ const FEATURES = [
   {
     icon: "🎬",
     title: "Video learning library",
-    body: "47 lessons across body systems, conditions, care planning, plus a dedicated NMC Code, numeracy and OSCE track.",
+    body: "57 lessons across body systems, conditions, care planning, plus dedicated Ghana NMC licensing and Midwifery tracks.",
   },
   {
     icon: "📈",
@@ -106,7 +106,7 @@ export default async function Home() {
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-800">
                 <span className="h-1.5 w-1.5 rounded-full bg-teal-600" />
-                32,000 practice questions with rationales
+                44,000 practice questions with rationales
               </span>
               <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
                 NMC exams and NCLEX{" "}
@@ -114,7 +114,8 @@ export default async function Home() {
               </h1>
               <p className="mt-5 max-w-xl text-lg leading-relaxed text-slate-600">
                 One study platform for both routes to registration — the UK <strong>NMC CBT and
-                OSCE</strong> and the US/Canada <strong>NCLEX</strong>. Plan your revision, drill a
+                Licensing Exam</strong>, the <strong>Midwifery Licensing Exam</strong> and the US/Canada{" "}
+                <strong>NCLEX</strong>. Plan your revision, drill a
                 huge question bank, watch focused lessons and track your readiness.
               </p>
 
@@ -165,7 +166,7 @@ export default async function Home() {
           <div className="border-y border-slate-200 bg-white">
             <dl className="mx-auto grid max-w-6xl grid-cols-2 divide-slate-200 px-5 sm:divide-x lg:grid-cols-4">
               {[
-                ["32,000", "Practice questions"],
+                ["44,000", "Practice questions"],
                 ["2", "Exam tracks: NMC & NCLEX"],
                 ["47", "Video lessons"],
                 ["20", "Specialty categories"],
@@ -277,7 +278,8 @@ export default async function Home() {
                 ["🫀", "Body Systems", "12 lessons", "Cardiovascular, respiratory, renal, neuro and more."],
                 ["🩺", "Common Conditions", "15 lessons", "Heart failure, DKA, sepsis, stroke, preeclampsia."],
                 ["📋", "Care Plans & Process", "8 lessons", "ADPIE, NANDA diagnoses, SMART goals, SBAR."],
-                ["🇬🇧", "NMC UK Registration", "10 lessons", "The Code, numeracy, safeguarding, NEWS2 and OSCE stations."],
+                ["🇬🇭", "Ghana NMC Licensing", "10 lessons", "Ghana Health System, CHPS, STG, malaria and the partograph."],
+                ["👶", "Midwifery Practice", "10 lessons", "Antenatal, labour, obstetric emergencies and newborn care."],
               ].map(([icon, title, count, body]) => (
                 <div key={title} className="rounded-2xl border border-slate-200 bg-white p-5">
                   <span className="text-2xl">{icon}</span>

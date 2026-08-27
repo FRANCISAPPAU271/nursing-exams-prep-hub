@@ -21,13 +21,20 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
   const [resetEmail, setResetEmail] = useState("");
   const [resetCode, setResetCode] = useState("");
   const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [confirmError, setConfirmError] = useState("");
   const [resetMsg, setResetMsg] = useState<{ kind: "ok" | "err"; text: string } | null>(null);
   const [resetBusy, setResetBusy] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (isRegister && password !== confirmPassword) {
+      setConfirmError("Passwords do not match.");
+      return;
+    }
     setLoading(true);
     setError("");
+    setConfirmError("");
     const res = await fetch(`/api/auth/${mode}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -226,11 +233,44 @@ export default function AuthForm({ mode }: { mode: "login" | "register" }) {
                 type="password"
                 className={inputCls}
                 value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (confirmPassword) {
+                    setConfirmError(
+                      confirmPassword !== e.target.value ? "Passwords do not match." : "",
+                    );
+                  }
+                }}
                 minLength={6}
                 required
               />
             </Field>
+            {isRegister && (
+              <Field label="Confirm password">
+                <input
+                  type="password"
+                  className={`${inputCls} ${
+                    confirmPassword && confirmPassword !== password
+                      ? "border-rose-400 focus:border-rose-400 focus:ring-rose-100"
+                      : ""
+                  }`}
+                  value={confirmPassword}
+                  onChange={(e) => {
+                    setConfirmPassword(e.target.value);
+                    setConfirmError(
+                      e.target.value !== password ? "Passwords do not match." : "",
+                    );
+                  }}
+                  minLength={6}
+                  required
+                />
+              </Field>
+            )}
+            {isRegister && confirmPassword && confirmPassword !== password && (
+              <p className="rounded-lg bg-rose-50 px-3 py-2 text-sm text-rose-700 ring-1 ring-rose-200">
+                Passwords do not match.
+              </p>
+            )}
 
             {isRegister && (
               <Field label="Referral code (optional)">

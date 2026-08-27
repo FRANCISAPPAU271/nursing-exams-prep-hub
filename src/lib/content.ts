@@ -17,22 +17,22 @@ export const FAQS: { q: string; a: string; group: string }[] = [
   {
     group: "Question bank",
     q: "How many questions are included?",
-    a: "32,000 in total — 20,000 NCLEX-style items across 10 US/Canada categories, plus 12,000 NMC items across 10 UK categories covering the Code, numeracy, safeguarding, the four fields of practice and OSCE stations.",
+    a: "44,000 in total — 20,000 NCLEX items across 10 US/Canada categories, 12,000 Ghana NMC licensing items (RGN) and 12,000 dedicated Midwifery items, each with a full rationale."
   },
   {
     group: "Exams covered",
     q: "Which exams does the platform prepare me for?",
-    a: "Two tracks. The NMC track covers the UK Test of Competence — CBT Part 1 (numeracy and clinical) and the OSCE. The NCLEX track covers NCLEX-RN and NCLEX-PN for the United States and Canada. Switch between them with one tap; questions, categories, mock format and lessons all change with you.",
+    a: "Three tracks. The Ghana NMC track prepares you for the Nursing and Midwifery Council of Ghana licensing exam for Registered General Nursing, using Ghana clinical practice, the Ghana Health System, CHPS and the national Standard Treatment Guidelines. The Midwifery track is a separate, dedicated bank. The NCLEX track covers NCLEX-RN and NCLEX-PN for the United States and Canada. Switch with one tap — questions, categories, mock format and lessons all follow you.",
   },
   {
     group: "Exams covered",
     q: "Do the mock exams match the real formats?",
-    a: "Yes. The NCLEX mock runs 75 questions in 90 minutes. The NMC CBT mock runs 120 questions across 4 hours, matching the real Test of Competence length so your pacing is realistic.",
+    a: "Yes. The NCLEX mock runs 75 questions in 90 minutes. The Ghana NMC and Midwifery mocks run 100 questions in 2 hours. All use 1 minute per question pacing to build real exam stamina."
   },
   {
     group: "Exams covered",
-    q: "Is there OSCE preparation for the NMC?",
-    a: "Yes. There is a dedicated OSCE Skills & Stations question category plus video lessons walking through the assessment, planning, implementation and evaluation stations and the practical skills — ANTT dressing, IM injection, catheterisation, NG tube and in-hospital resuscitation.",
+    q: "Is there a separate Midwifery question bank?",
+    a: "Yes. The Midwifery track is a full, separately named bank of 12,000 questions across 10 categories — Antenatal Care, Normal Labour & Delivery, Obstetric Emergencies, Puerperium, Newborn Care, Breastfeeding, Family Planning, Malaria & Infections in Pregnancy, Midwifery Professional Practice, and Gynaecology & Women's Health — with its own mock exam and video lessons."
   },
   {
     group: "Question bank",
@@ -121,6 +121,8 @@ export type Strategy = {
   icon: string;
   summary: string;
   points: string[];
+  /** Optional verified lecture reinforcing this strategy. */
+  video?: { youtubeId: string; channel: string; label: string };
 };
 
 export const STRATEGIES: Strategy[] = [
@@ -135,6 +137,11 @@ export const STRATEGIES: Strategy[] = [
       "Actual problems beat potential (at-risk) problems.",
       "When two clients both look unstable, choose the one whose condition can kill fastest.",
     ],
+    video: {
+      youtubeId: "Ug4fDIJNQhw",
+      channel: "NursingSOS",
+      label: "Prioritisation & delegation walkthrough",
+    }
   },
   {
     title: "Use the nursing process to pick the action",
@@ -146,6 +153,11 @@ export const STRATEGIES: Strategy[] = [
       "Evaluate only after an intervention has been implemented.",
       "Watch for the word 'first', 'initial', 'priority' or 'best' — it changes the whole answer.",
     ],
+    video: {
+      youtubeId: "RYT0JV07gEs",
+      channel: "Maria Mobley, MSN, RN",
+      label: "The Nursing Process explained",
+    }
   },
   {
     title: "Break down the stem before the options",
@@ -157,6 +169,11 @@ export const STRATEGIES: Strategy[] = [
       "Rephrase the question in your own words before looking at the options.",
       "Cover the options and predict your answer, then find the closest match.",
     ],
+    video: {
+      youtubeId: "X9ZZ6tcxArI",
+      channel: "CrashCourse A&P",
+      label: "Reading the stem with clinical context",
+    }
   },
   {
     title: "Eliminate distractors systematically",
@@ -169,6 +186,11 @@ export const STRATEGIES: Strategy[] = [
       "Global, umbrella answers are more often correct than narrow, specific ones.",
       "If two options are opposites, the answer is frequently one of them.",
     ],
+    video: {
+      youtubeId: "UxFCpHIJsiY",
+      channel: "RegisteredNurseRN",
+      label: "How I passed NCLEX first try",
+    }
   },
   {
     title: "Answer alternate-format items with confidence",
@@ -180,6 +202,11 @@ export const STRATEGIES: Strategy[] = [
       "Dosage calculation: label all units, use dimensional analysis, then sanity-check the magnitude.",
       "Exhibit items: read the tabs in order — vitals, labs, then provider notes.",
     ],
+    video: {
+      youtubeId: "gdnwec8GiLo",
+      channel: "SimpleNursing — Nurse Mike",
+      label: "3-step NCLEX study plan",
+    }
   },
   {
     title: "Think like the ideal textbook nurse",
@@ -191,6 +218,11 @@ export const STRATEGIES: Strategy[] = [
       "Therapeutic communication: acknowledge feelings, stay open-ended, never give false reassurance.",
       "Client autonomy, informed consent and confidentiality are never violated.",
     ],
+    video: {
+      youtubeId: "Oc9e-9HEsOE",
+      channel: "RegisteredNurseRN",
+      label: "Heart failure management & nursing care",
+    }
   },
   {
     title: "Manage time and test-day nerves",
@@ -203,6 +235,11 @@ export const STRATEGIES: Strategy[] = [
       "Use box breathing (4-4-4-4) when you feel panic rising mid-exam.",
       "The number of questions you receive says nothing about pass or fail — keep going.",
     ],
+    video: {
+      youtubeId: "29sJDWdLnNM",
+      channel: "RegisteredNurseRN",
+      label: "Myocardial infarction nursing management",
+    }
   },
   {
     title: "Remediate, do not just repeat",
@@ -215,5 +252,10 @@ export const STRATEGIES: Strategy[] = [
       "Re-drill weak categories within 48 hours while the correction is fresh.",
       "Aim to keep every category above 70% before test day.",
     ],
+    video: {
+      youtubeId: "XuGPoQWzIco",
+      channel: "RegisteredNurseRN",
+      label: "Sepsis & shock nursing review",
+    }
   },
 ];

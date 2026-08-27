@@ -14,7 +14,8 @@ export const LIBRARY_SECTIONS = [
   "Body Systems",
   "Common Conditions",
   "Care Plans & Nursing Process",
-  "NMC UK Registration",
+  "Ghana NMC Licensing",
+  "Midwifery Practice",
 ];
 
 const bodySystems: [string, string, number][] = [
@@ -61,17 +62,30 @@ const carePlans: [string, string, number][] = [
   ["Delegation & Scope of Practice", "RN vs LPN vs UAP — what can safely be delegated.", 14],
 ];
 
-const nmcLessons: [string, string, number][] = [
-  ["NMC CBT Part 1: Format & Pass Mark", "What the Test of Competence covers, how the numeracy and clinical papers are scored, and booking through Pearson VUE.", 14],
-  ["The NMC Code Explained", "Prioritise people, practise effectively, preserve safety and promote professionalism — with exam-style examples.", 18],
-  ["Numeracy for the CBT", "Tablets, liquids, infusion rates, drops per minute and weight-based dosing worked step by step.", 22],
-  ["Mental Capacity Act & Consent (UK)", "Capacity assessment, best interests, DoLS and advance decisions as they appear in the CBT.", 17],
-  ["Safeguarding in UK Practice", "Adults at risk, child protection, Gillick competence, PREVENT and mandatory FGM reporting.", 19],
-  ["NEWS2 & Escalation", "Scoring, trigger thresholds and what the UK escalation response should be.", 13],
-  ["Sepsis Six & UK Sepsis Pathways", "Recognition, the one-hour bundle and how it is examined.", 12],
-  ["OSCE: The Four Assessment Stations", "Assessment, planning, implementation and evaluation — what examiners look for.", 21],
-  ["OSCE: Practical Skills Walkthrough", "ANTT dressing, IM injection, catheterisation, NG tube and in-hospital resuscitation.", 24],
-  ["Revalidation & Professional Accountability", "Practice hours, CPD, reflective accounts, confirmation and delegation responsibility.", 15],
+const ghanaNmcLessons: [string, string, number][] = [
+  ["Ghana NMC Licensing Exam: Format & How to Prepare", "What the NMC Ghana licensing exam covers, how the papers are structured and how to plan your revision.", 14],
+  ["The Ghana Health System & CHPS Explained", "Levels of care from CHPS compound to teaching hospital, referrals and the role of the community health nurse.", 17],
+  ["Ghana Standard Treatment Guidelines in Practice", "Using the Essential Medicines List and STG to check prescriptions and give safe medicines.", 16],
+  ["Malaria: Ghana Treatment Guidelines", "Uncomplicated and severe malaria, ACTs, injectable artesunate and nursing care.", 19],
+  ["The Partograph: Detecting Complications Early", "Plotting labour progress, the alert and action lines, and when to refer.", 21],
+  ["Emergency Obstetric Care: Recognise & Refer", "Postpartum haemorrhage, pre-eclampsia, obstructed labour and the referral chain.", 20],
+  ["Sickle Cell Disease Nursing Care in Ghana", "Crisis triggers, hydration, analgesia, infection and client education.", 18],
+  ["Severe Acute Malnutrition & IMCI", "MUAC classification, F-75 and F-100 feeding, and the IMCI danger signs.", 22],
+  ["Infection Prevention in Resource-Limited Settings", "Hand hygiene with limited water, PPE, sharps safety and waste management.", 15],
+  ["Professional Conduct & the NMC Ghana Code", "Accountability, confidentiality, consent, documentation and reporting poor practice.", 16],
+];
+
+const midwiferyLessons: [string, string, number][] = [
+  ["Antenatal Care: The Complete Visit", "History, examination, danger signs, tetanus immunisation, iron and malaria prophylaxis.", 20],
+  ["Normal Labour: The Stages Explained", "First to fourth stage, the partograph, fetal monitoring and supportive care.", 22],
+  ["Active Management of the Third Stage", "Uterotonics, controlled cord traction and estimating blood loss accurately.", 15],
+  ["Postpartum Haemorrhage: The Golden Hour", "The four Ts, uterotonic sequence, bimanual compression and escalation.", 24],
+  ["Pre-eclampsia & Eclampsia", "Blood pressure, reflexes, proteinuria, magnesium sulfate and seizure precautions.", 21],
+  ["Newborn Resuscitation: The Golden Minute", "Drying, stimulation, bag and mask ventilation, and when to escalate.", 19],
+  ["Kangaroo Mother Care for Low Birth Weight", "Positioning, feeding, temperature control and discharge criteria.", 16],
+  ["Breastfeeding: Attachment & Common Problems", "Correct attachment, engorgement, cracked nipples, mastitis and relactation.", 18],
+  ["Family Planning Methods in Ghana", "All method options, dual protection, side effects and informed choice.", 17],
+  ["The Puerperium: Normal & Abnormal", "Involution, lochia changes, sepsis red flags, thrombosis and mental health.", 20],
 ];
 
 export type TopicVideoInfo = {
@@ -87,7 +101,7 @@ export const TOPIC_VIDEO_MAP: Record<string, TopicVideoInfo> = {
     channel: "RegisteredNurseRN (Pass NCLEX First Try & Exam Orientation)",
     keyPoints: [
       "Use the Study Task Manager to schedule daily 50-question review blocks.",
-      "Switch between NCLEX and UK NMC tabs depending on your target license.",
+      "Switch between NCLEX, Ghana NMC and Midwifery tabs depending on your target exam.",
       "Review the rationale for every option — right and wrong — to build clinical judgement.",
       "Complete at least three full-length timed mock exams before your test date.",
     ],
@@ -410,7 +424,7 @@ export const LESSON_SEEDS: LessonSeed[] = [
   {
     title: "Welcome: How to Use All Nursing Exams Prep Hub",
     description:
-      "A guided tour of the dashboard: building study tasks, searching the 20,000-question bank, running practice quizzes, taking mock exams and reading your progress analytics.",
+      "A guided tour of the dashboard: building study tasks, searching the 44,000-question bank, running practice quizzes, taking mock exams and reading your progress analytics.",
     section: "App Orientation",
     topic: "Getting Started",
     durationMin: 9,
@@ -454,14 +468,24 @@ export const LESSON_SEEDS: LessonSeed[] = [
     searchQuery: `${title} nursing students tutorial`,
     premium: i > 0,
   })),
-  ...nmcLessons.map(([title, description, durationMin], i) => ({
-    exam: "NMC",
+  ...ghanaNmcLessons.map(([title, description, durationMin], i) => ({
+    exam: "GHANA_NMC",
     title,
     description,
-    section: "NMC UK Registration",
+    section: "Ghana NMC Licensing",
     topic: title,
     durationMin,
-    searchQuery: `${title} NMC CBT OSCE UK nurses`,
+    searchQuery: `${title} Ghana NMC licensing exam nursing`,
+    premium: i > 1,
+  })),
+  ...midwiferyLessons.map(([title, description, durationMin], i) => ({
+    exam: "MIDWIFERY",
+    title,
+    description,
+    section: "Midwifery Practice",
+    topic: title,
+    durationMin,
+    searchQuery: `${title} midwifery Ghana NMC labour delivery`,
     premium: i > 1,
   })),
 ];

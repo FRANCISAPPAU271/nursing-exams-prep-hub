@@ -1,4 +1,4 @@
-export type ExamId = "NCLEX" | "NMC";
+export type ExamId = "NCLEX" | "GHANA_NMC" | "MIDWIFERY";
 
 export type Exam = {
   id: ExamId;
@@ -34,24 +34,45 @@ export const EXAMS: Exam[] = [
     ],
   },
   {
-    id: "NMC",
-    name: "NMC",
-    full: "NMC CBT Part 1 & OSCE (United Kingdom)",
-    flag: "🇬🇧",
+    id: "GHANA_NMC",
+    name: "Ghana NMC",
+    full: "NMC Ghana Licensing Examination — Registered General Nursing",
+    flag: "🇬🇭",
     blurb:
-      "Registration for internationally educated nurses and midwives in the UK — the computer-based Test of Competence plus the practical OSCE.",
-    mock: { questions: 120, minutes: 240, label: "120 questions · 4 hours" },
+      "The Nursing and Midwifery Council of Ghana licensing exam for Registered General Nursing. Ghana clinical practice, the Ghana Health System, CHPS, and national treatment guidelines.",
+    mock: { questions: 100, minutes: 120, label: "100 questions · 2 hours" },
     categories: [
-      "The NMC Code & Accountability",
-      "Numeracy & Drug Calculations",
-      "Safeguarding & Consent (UK)",
-      "Infection Prevention (UK)",
-      "Adult Nursing (UK)",
-      "Mental Health Nursing (UK)",
-      "Midwifery & Maternal Care (UK)",
-      "Child & Young Person Nursing (UK)",
-      "OSCE Skills & Stations",
-      "Care Planning: APIE",
+      "Ghana Health System & CHPS",
+      "Medical-Surgical Nursing (Ghana)",
+      "Pharmacology & Ghana STG",
+      "Community Health Nursing",
+      "Maternal & Newborn Care",
+      "Child Health (Ghana)",
+      "Mental Health Nursing",
+      "Communicable Diseases (Ghana)",
+      "Professional Practice & NMC Ghana Code",
+      "Emergency & Critical Care",
+    ],
+  },
+  {
+    id: "MIDWIFERY",
+    name: "Midwifery",
+    full: "NMC Ghana Licensing Examination — Midwifery",
+    flag: "👶",
+    blurb:
+      "A dedicated midwifery question bank: antenatal care, normal and complicated labour, obstetric emergencies, the puerperium, newborn care, family planning and women's health.",
+    mock: { questions: 100, minutes: 120, label: "100 questions · 2 hours" },
+    categories: [
+      "Antenatal Care",
+      "Normal Labour & Delivery",
+      "Obstetric Emergencies",
+      "Puerperium & Postnatal Care",
+      "Newborn Care",
+      "Breastfeeding & Infant Feeding",
+      "Family Planning",
+      "Malaria & Infections in Pregnancy",
+      "Midwifery Professional Practice",
+      "Gynaecology & Women's Health",
     ],
   },
 ];
@@ -66,7 +87,12 @@ export function categoriesFor(examId: string) {
   return getExam(examId).categories;
 }
 
-/** All categories across both exams (used by the study task manager). */
+/** All categories across every exam track (used by the study task manager). */
 export const ALL_CATEGORIES = Array.from(
   new Set(EXAMS.flatMap((e) => e.categories)),
 );
+
+/** Human label for a stored exam id, safe for unknown values. */
+export function examLabel(id: string): string {
+  return getExam(id).name;
+}

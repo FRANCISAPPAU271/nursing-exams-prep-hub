@@ -23,7 +23,7 @@ const TOUR_CHAPTERS = [
     badge: "Dashboard Cockpit",
     summary: "Track your overall readiness percentage, questions completed, and upcoming revision milestones in one glance.",
     visual: {
-      stat1: "32,000 Questions",
+      stat1: "44,000 Questions",
       stat2: "70%+ Target Accuracy",
       stat3: "Dual Track: US + UK",
     },
@@ -53,16 +53,16 @@ const TOUR_CHAPTERS = [
   {
     step: 3,
     icon: "❓",
-    title: "32,000 Questions Bank & Rationales",
+    title: "44,000 Questions Bank & Rationales",
     badge: "Question Bank",
-    summary: "Comprehensive item bank covering both the US/Canada NCLEX (20,000) and UK NMC CBT (12,000).",
+    summary: "Comprehensive item bank covering the US/Canada NCLEX (20,000), Ghana NMC licensing (12,000) and Midwifery (12,000).",
     visual: {
       stat1: "🇺🇸 20,000 NCLEX",
-      stat2: "🇬🇧 12,000 NMC CBT",
+      stat2: "🇬🇭 24,000 Ghana NMC",
       stat3: "Detailed Rationales",
     },
     tips: [
-      "Use the Exam Switcher tabs at the top to toggle between NCLEX and UK NMC.",
+      "Use the Exam Switcher tabs at the top to toggle NCLEX, Ghana NMC and Midwifery.",
       "Filter by category: Pharmacology, Med-Surg, The NMC Code, Numeracy & Calculations, etc.",
       "Click 'Show answer & rationale' on any question to understand why right and wrong answers differ.",
     ],
@@ -81,7 +81,7 @@ const TOUR_CHAPTERS = [
     tips: [
       "Budget: 1 minute per question — 75 items = 75 minutes.",
       "NCLEX Mock: 75 questions in 90 minutes with question navigator.",
-      "UK NMC CBT Mock: 120 questions across 4 hours covering clinical care and numeracy.",
+      "Ghana NMC & Midwifery Mocks: 100 questions in 2 hours each.",
       "Flag difficult questions to review before submitting, then study every rationale.",
     ],
   },
@@ -128,7 +128,7 @@ const STUDY_PLAN_WEEKS = [
     title: "Fundamentals, Safety & Infection Control",
     target: "100 questions / day + ADPIE review",
     focus: "Standard, contact, droplet, and airborne precautions; sterile technique, vital signs, ethics and delegation.",
-    examTip: "NCLEX: Always assess before intervening. UK NMC: Know the 5 moments of hand hygiene and Sepsis Six.",
+    examTip: "Always assess before intervening. For Ghana NMC, know the IMCI danger signs and the Sepsis Six."
   },
   {
     week: 2,
@@ -220,7 +220,7 @@ export default function LibraryClient({
         <div>
           <h1 className="text-2xl font-bold">Learning Library</h1>
           <p className="text-sm text-slate-500">
-            {lessons.length} video lectures, interactive study tours & clinical guides — body systems, common conditions, care plans, and NMC UK registration.
+            {lessons.length} video lectures, interactive study tours & clinical guides — body systems, common conditions, care plans, Ghana NMC licensing and Midwifery practice.
           </p>
         </div>
         {!isPremium && (

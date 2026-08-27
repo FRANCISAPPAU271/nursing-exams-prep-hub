@@ -2,7 +2,8 @@ import "dotenv/config";
 import { db, pool } from "./index";
 import { attempts, lessons, payouts, questions, referrals, tasks, users } from "./schema";
 import { LESSON_SEEDS } from "../lib/library";
-import { NMC_CATEGORIES } from "../lib/nmc-topics";
+import { GHANA_NMC_CATEGORIES } from "../lib/ghana-nmc-topics";
+import { MIDWIFERY_CATEGORIES } from "../lib/midwifery-topics";
 import { buildReferralCode } from "../lib/referrals";
 import { hashPassword } from "../lib/auth";
 import { sql } from "drizzle-orm";
@@ -288,16 +289,17 @@ function shuffleWithSeed<T>(arr: T[], seed: number): T[] {
 type Draft = { stem: string; correct: string; distractors: string[]; rationale: string };
 
 function buildDrafts(t: Topic, category: string, exam = "NCLEX"): Draft[] {
-  // UK (NMC) papers say "patient", reference the doctor/registered nurse and
-  // NICE/local policy; US (NCLEX) papers say "client" and "provider".
-  const uk = exam === "NMC";
-  const P = uk ? "patient" : "client";
-  const Pc = uk ? "Patient" : "Client";
-  const PROVIDER = uk ? "doctor" : "provider";
-  const NURSE = uk ? "registered nurse" : "nurse";
-  const scenario = uk
-    ? `A ${NURSE} is caring for a ${P} and is considering ${t.name}.`
-    : `A nurse is caring for a client with ${t.name}.`;
+  // Ghana papers (NMC RGN + Midwifery) say "patient" and "doctor"; US (NCLEX)
+  // papers say "client" and "provider". Midwifery leads with the midwife/woman.
+  const ghana = exam !== "NCLEX";
+  const isMid = exam === "MIDWIFERY";
+  const P = ghana ? "patient" : "client";
+  const Pc = ghana ? "Patient" : "Client";
+  const PROVIDER = ghana ? "doctor" : "provider";
+  const NURSE = isMid ? "midwife" : "nurse";
+  const scenario = isMid
+    ? `A midwife is caring for a woman and is considering ${t.name}.`
+    : `A ${NURSE} is caring for a ${P} and is considering ${t.name}.`;
   return [
     {
       stem: `${scenario} Which finding should be reported to the ${PROVIDER}?`,
@@ -317,7 +319,7 @@ function buildDrafts(t: Topic, category: string, exam = "NCLEX"): Draft[] {
         `The ${NURSE} should encourage the ${P} to rest quietly.`,
         `The ${NURSE} should wait for the next scheduled ward round.`,
       ],
-      rationale: `When ${t.finding} occurs in ${t.name}, the priority nursing action is to ${t.action}. Delaying intervention can worsen client outcomes.`,
+      rationale: `When ${t.finding} occurs in ${t.name}, the priority nursing action is to ${t.action}. Delaying intervention can worsen ${P} outcomes.`,
     },
     {
       stem: `A ${NURSE} is reviewing results relating to ${t.name}. Which is most important to monitor?`,
@@ -367,7 +369,7 @@ function buildDrafts(t: Topic, category: string, exam = "NCLEX"): Draft[] {
         `The ${P} requesting a routine analgesia review.`,
         `The ${P} who needs help ordering lunch.`,
       ],
-      rationale: `The client with ${t.name} and ${t.finding} shows a change in condition and takes priority using the ABC and acute-versus-chronic frameworks.`,
+      rationale: `The ${P} with ${t.name} and ${t.finding} shows a change in condition and takes priority using the ABC and acute-versus-chronic frameworks.`,
     },
     {
       stem: `A ${NURSE} is evaluating care relating to ${t.name}. Which outcome shows the plan is working?`,
@@ -390,7 +392,7 @@ function buildDrafts(t: Topic, category: string, exam = "NCLEX"): Draft[] {
       rationale: `Documentation should be objective, describe the finding, the nursing action, and communication. Subjective or judgmental entries are inappropriate.`,
     },
     {
-      stem: `Which task relating to ${t.name} may safely be delegated to a ${uk ? "healthcare assistant" : "nursing assistant"}?`,
+      stem: `Which task relating to ${t.name} may safely be delegated to a ${ghana ? "healthcare assistant" : "nursing assistant"}?`,
       correct: `Obtaining and recording routine observations for a stable ${P}.`,
       distractors: [
         `Evaluating the ${P}\u2019s response to ${t.drug}.`,
@@ -412,7 +414,7 @@ async function main() {
   const existing = await db.execute<{ count: string }>(sql`select count(*)::text as count from questions`);
   const count = Number(existing.rows[0]?.count ?? 0);
 
-  if (force || count < 32000) {
+  if (force || count < 44000) {
     await db.execute(sql`truncate table questions restart identity cascade`);
     const rows: (typeof questions.$inferInsert)[] = [];
     let n = 0;
@@ -447,14 +449,15 @@ async function main() {
 
     // NCLEX: 10 categories x 20 topics x 10 variants x 10 drafts = 20,000
     build("NCLEX", CATEGORIES, 10);
-    // NMC (UK): 10 categories x 12 topics x 10 variants x 10 drafts = 12,000
-    build("NMC", NMC_CATEGORIES, 10);
+    // Ghana NMC (RGN): 10 categories x 12 topics x 10 variants x 10 drafts = 12,000
+    build("GHANA_NMC", GHANA_NMC_CATEGORIES, 10);
+    // Midwifery: 10 categories x 12 topics x 10 variants x 10 drafts = 12,000
+    build("MIDWIFERY", MIDWIFERY_CATEGORIES, 10);
     for (let i = 0; i < rows.length; i += 1000) {
       await db.insert(questions).values(rows.slice(i, i + 1000));
     }
     console.log(
-      `Inserted ${rows.length} questions ` +
-        `(NCLEX ${rows.filter((r) => r.exam === "NCLEX").length}, NMC ${rows.filter((r) => r.exam === "NMC").length})`,
+      `Inserted ${rows.length} questions (NCLEX ${rows.filter((r) => r.exam === "NCLEX").length}, Ghana NMC ${rows.filter((r) => r.exam === "GHANA_NMC").length}, Midwifery ${rows.filter((r) => r.exam === "MIDWIFERY").length})`,
     );
   } else {
     console.log(`Questions already seeded: ${count}`);
