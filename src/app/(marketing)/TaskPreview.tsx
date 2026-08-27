@@ -17,7 +17,7 @@ const TASKS = [
   },
   {
     title: "Review acid–base balance",
-    meta: "Health Assessment · Fri",
+    meta: "Respiratory · Fri",
     priority: "medium",
     done: false,
     progress: 0,

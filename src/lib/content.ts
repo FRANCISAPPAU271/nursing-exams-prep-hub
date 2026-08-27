@@ -32,7 +32,7 @@ export const FAQS: { q: string; a: string; group: string }[] = [
   {
     group: "Exams covered",
     q: "Is there a separate Midwifery question bank?",
-    a: "Yes. The Midwifery track is a separately named bank of 249 questions across 10 categories — Antenatal Care, Normal Labour & Delivery, Obstetric Emergencies, Puerperium, Newborn Care, Breastfeeding, Family Planning, Malaria & Infections in Pregnancy, Midwifery Professional Practice, and Gynaecology & Women's Health — with its own mock exam and video lessons."
+    a: "Yes. The Midwifery track is a separately named bank with seven categories — Antenatal Care, Normal Labour & Delivery, Obstetric Emergencies, Puerperium & Postnatal Care, Newborn Care, Family Planning, and Gynaecology & Women's Health — plus its own mock exam and video lessons."
   },
   {
     group: "Question bank",

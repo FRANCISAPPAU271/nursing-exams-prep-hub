@@ -125,7 +125,7 @@ const STUDY_PLAN_WEEKS = [
   {
     week: 1,
     label: "Week 1",
-    title: "Fundamentals, Safety & Infection Control",
+    title: "Fundamentals, Safety & Infection",
     target: "100 questions / day + ADPIE review",
     focus: "Standard, contact, droplet, and airborne precautions; sterile technique, vital signs, ethics and delegation.",
     examTip: "Always assess before intervening. Know the paediatric danger signs and the sepsis six."
@@ -157,7 +157,7 @@ const STUDY_PLAN_WEEKS = [
   {
     week: 5,
     label: "Week 5",
-    title: "Maternal-Newborn, Pediatrics & Mental Health",
+    title: "Maternal & Child, Psychosocial Care",
     target: "125 questions / day + weak spot review",
     focus: "Preeclampsia, fetal heart monitoring, pediatric milestones, psych meds (Lithium, Clozapine).",
     examTip: "Placenta previa = painless bright red bleeding (NO vaginal exams). Abruptio placentae = painful dark red bleeding.",

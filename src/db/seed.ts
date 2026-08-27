@@ -268,7 +268,7 @@ async function main() {
     const day = (d: number) => new Date(Date.now() + d * 86400000);
     await db.insert(tasks).values([
       { userId, title: "Complete 50 pharmacology questions", notes: "Focus on anticoagulants and insulins.", category: "Pharmacology", priority: "high", status: "in_progress", dueDate: day(1), targetQuestions: 50 },
-      { userId, title: "Review acid-base balance", notes: "ROME method drills + 20 questions.", category: "Health Assessment", priority: "medium", status: "todo", dueDate: day(3), targetQuestions: 20 },
+      { userId, title: "Review acid-base balance", notes: "ROME method drills + 20 questions.", category: "Respiratory", priority: "medium", status: "todo", dueDate: day(3), targetQuestions: 20 },
       { userId, title: "Maternal-newborn content review", notes: "Pre-eclampsia, PPH, fetal monitoring.", category: "Maternal & Child", priority: "high", status: "todo", dueDate: day(4), targetQuestions: 40 },
     ]);
     await db.insert(attempts).values([
