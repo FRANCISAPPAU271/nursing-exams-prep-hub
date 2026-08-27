@@ -362,7 +362,7 @@ function buildDrafts(t: Topic, category: string, exam = "NCLEX"): Draft[] {
       rationale: `Evidence-based care for ${t.name} includes the intervention to ${t.action}. The other options are inappropriate or require a specific prescription.`,
     },
     {
-      stem: `A ${NURSE} is prioritising care on the ward. Which ${P} should be assessed first?`,
+      stem: `A ${NURSE} is prioritising care on the ward. Which ${P} should be assessed first? (${t.name})`,
       correct: `The ${P} with ${t.finding}.`,
       distractors: [
         `The ${P} awaiting discharge information in 2 hours.`,
@@ -414,50 +414,59 @@ async function main() {
   const existing = await db.execute<{ count: string }>(sql`select count(*)::text as count from questions`);
   const count = Number(existing.rows[0]?.count ?? 0);
 
-  if (force || count < 44000) {
+  if (force || count < 4400) {
     await db.execute(sql`truncate table questions restart identity cascade`);
     const rows: (typeof questions.$inferInsert)[] = [];
+    const seen = new Set<string>();
+    let skipped = 0;
     let n = 0;
 
     const build = (
       exam: string,
       groups: { category: string; clientNeed: string; topics: Topic[] }[],
-      variants: number,
     ) => {
       for (const cat of groups) {
         for (const topic of cat.topics) {
           const drafts = buildDrafts(topic, cat.category, exam);
-          for (let variant = 0; variant < variants; variant++) {
-            for (const d of drafts) {
-              n++;
-              const opts = shuffleWithSeed([d.correct, ...d.distractors], n * 7 + variant);
-              rows.push({
-                exam,
-                stem: variant === 0 ? d.stem : `${d.stem} (Case ${variant + 1})`,
-                options: opts,
-                correctIndex: opts.indexOf(d.correct),
-                rationale: d.rationale,
-                category: cat.category,
-                difficulty: DIFFICULTIES[n % 3],
-                clientNeed: cat.clientNeed,
-              });
+          // One question per template. Repeating a stem with a "(Case N)" label
+          // does not create a new question — it creates a duplicate, so every
+          // generated item is unique by construction.
+          for (const d of drafts) {
+            n++;
+            // Enforce uniqueness: skip any stem already generated in this run so
+            // a topic appearing in two categories cannot produce duplicates.
+            if (seen.has(d.stem)) {
+              skipped++;
+              continue;
             }
+            seen.add(d.stem);
+            const opts = shuffleWithSeed([d.correct, ...d.distractors], n * 7);
+            rows.push({
+              exam,
+              stem: d.stem,
+              options: opts,
+              correctIndex: opts.indexOf(d.correct),
+              rationale: d.rationale,
+              category: cat.category,
+              difficulty: DIFFICULTIES[n % 3],
+              clientNeed: cat.clientNeed,
+            });
           }
         }
       }
     };
 
-    // NCLEX: 10 categories x 20 topics x 10 variants x 10 drafts = 20,000
-    build("NCLEX", CATEGORIES, 10);
-    // Ghana NMC (RGN): 10 categories x 12 topics x 10 variants x 10 drafts = 12,000
-    build("GHANA_NMC", GHANA_NMC_CATEGORIES, 10);
-    // Midwifery: 10 categories x 12 topics x 10 variants x 10 drafts = 12,000
-    build("MIDWIFERY", MIDWIFERY_CATEGORIES, 10);
+    // NCLEX: 10 categories x 20 topics x 10 templates = 2,000 unique
+    build("NCLEX", CATEGORIES);
+    // Ghana NMC (RGN): 20 categories x ~13 topics x 10 templates = ~2,660 unique
+    build("GHANA_NMC", GHANA_NMC_CATEGORIES);
+    // Midwifery: 20 categories x ~12 topics x 10 templates = ~2,380 unique
+    build("MIDWIFERY", MIDWIFERY_CATEGORIES);
     for (let i = 0; i < rows.length; i += 1000) {
       await db.insert(questions).values(rows.slice(i, i + 1000));
     }
     console.log(
-      `Inserted ${rows.length} questions (NCLEX ${rows.filter((r) => r.exam === "NCLEX").length}, Ghana NMC ${rows.filter((r) => r.exam === "GHANA_NMC").length}, Midwifery ${rows.filter((r) => r.exam === "MIDWIFERY").length})`,
+      `Inserted ${rows.length} unique questions (NCLEX ${rows.filter((r) => r.exam === "NCLEX").length}, Ghana NMC ${rows.filter((r) => r.exam === "GHANA_NMC").length}, Midwifery ${rows.filter((r) => r.exam === "MIDWIFERY").length})`,
     );
   } else {
     console.log(`Questions already seeded: ${count}`);

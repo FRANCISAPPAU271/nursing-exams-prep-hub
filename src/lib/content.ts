@@ -17,7 +17,7 @@ export const FAQS: { q: string; a: string; group: string }[] = [
   {
     group: "Question bank",
     q: "How many questions are included?",
-    a: "44,000 in total — 20,000 NCLEX items across 10 US/Canada categories, 12,000 Ghana NMC licensing items (RGN) and 12,000 dedicated Midwifery items, each with a full rationale."
+    a: "Over 7,000 in total — 2,000 NCLEX items across 10 US/Canada categories, 2,660 Ghana NMC licensing items (RGN) and 2,381 dedicated Midwifery items, each with a full rationale."
   },
   {
     group: "Exams covered",
@@ -32,7 +32,7 @@ export const FAQS: { q: string; a: string; group: string }[] = [
   {
     group: "Exams covered",
     q: "Is there a separate Midwifery question bank?",
-    a: "Yes. The Midwifery track is a full, separately named bank of 12,000 questions across 10 categories — Antenatal Care, Normal Labour & Delivery, Obstetric Emergencies, Puerperium, Newborn Care, Breastfeeding, Family Planning, Malaria & Infections in Pregnancy, Midwifery Professional Practice, and Gynaecology & Women's Health — with its own mock exam and video lessons."
+    a: "Yes. The Midwifery track is a full, separately named bank of over 2,300 questions across 10 categories — Antenatal Care, Normal Labour & Delivery, Obstetric Emergencies, Puerperium, Newborn Care, Breastfeeding, Family Planning, Malaria & Infections in Pregnancy, Midwifery Professional Practice, and Gynaecology & Women's Health — with its own mock exam and video lessons."
   },
   {
     group: "Question bank",

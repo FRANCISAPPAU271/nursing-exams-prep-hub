@@ -424,7 +424,7 @@ export const LESSON_SEEDS: LessonSeed[] = [
   {
     title: "Welcome: How to Use All Nursing Exams Prep Hub",
     description:
-      "A guided tour of the dashboard: building study tasks, searching the 44,000-question bank, running practice quizzes, taking mock exams and reading your progress analytics.",
+      "A guided tour of the dashboard: building study tasks, searching the 7,000-question bank, running practice quizzes, taking mock exams and reading your progress analytics.",
     section: "App Orientation",
     topic: "Getting Started",
     durationMin: 9,
