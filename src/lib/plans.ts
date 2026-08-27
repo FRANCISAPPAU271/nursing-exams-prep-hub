@@ -45,7 +45,7 @@ export const PLANS: Plan[] = [
     tagline: "Free forever",
     features: [
       "Unlimited study task manager",
-      "Browse all 7,000+ practice questions",
+      "Browse all 1,000+ practice questions",
       "Practice quizzes up to 10 questions",
       "FAQ & exam strategy guides",
     ],

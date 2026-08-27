@@ -49,7 +49,7 @@ export default function ReferClient({
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
   const link = `${origin}/register?ref=${code}`;
-  const share = `Hi! I'm using All Nursing Exams Prep Hub to prepare for the NCLEX — 20,000 practice questions, video lessons and timed mock exams. Sign up with my link and get ${REFEREE_BONUS_DAYS} days of Pro free: ${link}`;
+  const share = `Hi! I'm using All Nursing Exams Prep Hub to prepare for the NCLEX — 1,000+ unique practice questions, video lessons and timed mock exams. Sign up with my link and get ${REFEREE_BONUS_DAYS} days of Pro free: ${link}`;
 
   const converted = referrals.filter((r) => r.status !== "signed_up");
   const lifetime = referrals.reduce((s, r) => s + r.rewardAmount, 0);

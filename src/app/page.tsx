@@ -15,8 +15,8 @@ export const dynamic = "force-dynamic";
 const FEATURES = [
   {
     icon: "❓",
-    title: "7,000+ practice questions",
-    body: "2,000 NCLEX items, 2,660 Ghana NMC licensing items and 2,381 Midwifery items — every one unique, tagged by category and difficulty, with a written rationale.",
+    title: "1,000+ practice questions",
+    body: "1,000+ NCLEX, Ghana NMC and Midwifery items — every one unique, tagged by category and difficulty, with a written rationale.",
   },
   {
     icon: "☑",
@@ -106,7 +106,7 @@ export default async function Home() {
             <div>
               <span className="inline-flex items-center gap-2 rounded-full bg-teal-100 px-3 py-1 text-xs font-semibold text-teal-800">
                 <span className="h-1.5 w-1.5 rounded-full bg-teal-600" />
-                7,000+ practice questions with rationales
+                1,000+ practice questions with rationales
               </span>
               <h1 className="mt-5 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl lg:text-6xl">
                 NMC exams and NCLEX{" "}
@@ -166,7 +166,7 @@ export default async function Home() {
           <div className="border-y border-slate-200 bg-white">
             <dl className="mx-auto grid max-w-6xl grid-cols-2 divide-slate-200 px-5 sm:divide-x lg:grid-cols-4">
               {[
-                ["7,000+", "Unique practice questions"],
+                ["1,000+", "Unique practice questions"],
                 ["2", "Exam tracks: NMC & NCLEX"],
                 ["47", "Video lessons"],
                 ["20", "Specialty categories"],

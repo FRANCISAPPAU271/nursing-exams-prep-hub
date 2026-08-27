@@ -23,7 +23,7 @@ const TOUR_CHAPTERS = [
     badge: "Dashboard Cockpit",
     summary: "Track your overall readiness percentage, questions completed, and upcoming revision milestones in one glance.",
     visual: {
-      stat1: "7,000+ Questions",
+      stat1: "1,000+ Questions",
       stat2: "70%+ Target Accuracy",
       stat3: "Dual Track: US + UK",
     },
@@ -53,11 +53,11 @@ const TOUR_CHAPTERS = [
   {
     step: 3,
     icon: "❓",
-    title: "7,000+ Questions Bank & Rationales",
+    title: "1,000+ Questions Bank & Rationales",
     badge: "Question Bank",
-    summary: "Comprehensive item bank covering the US/Canada NCLEX (2,000), Ghana NMC licensing (2,660) and Midwifery (2,381) — all unique.",
+    summary: "Comprehensive item bank covering NCLEX, Ghana NMC and Midwifery — every question unique.",
     visual: {
-      stat1: "🇺🇸 20,000 NCLEX",
+      stat1: "🇺🇸 NCLEX",
       stat2: "🇬🇭 24,000 Ghana NMC",
       stat3: "Detailed Rationales",
     },
